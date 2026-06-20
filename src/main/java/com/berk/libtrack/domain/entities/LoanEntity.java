@@ -1,16 +1,16 @@
-package com.berk.libtrack.domain;
+package com.berk.libtrack.domain.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Getter
 @Setter
+@Builder
 @Table(name = "Loans")
 public class LoanEntity {
 
@@ -18,13 +18,16 @@ public class LoanEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "member_id")
     private MemberEntity memberEntity;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "book_id")
     private BookEntity bookEntity;
+
+    @OneToOne(mappedBy = "loanEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    private FineEntity fine;
 
     @Column(nullable = false)
     private LocalDateTime borrowedAt;

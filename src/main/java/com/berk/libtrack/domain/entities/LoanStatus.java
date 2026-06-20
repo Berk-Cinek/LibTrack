@@ -1,4 +1,4 @@
-package com.berk.libtrack.domain;
+package com.berk.libtrack.domain.entities;
 
 public enum LoanStatus {
         ACTIVE,

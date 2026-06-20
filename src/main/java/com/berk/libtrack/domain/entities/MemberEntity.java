@@ -1,9 +1,7 @@
-package com.berk.libtrack.domain;
+package com.berk.libtrack.domain.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -11,9 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 @Entity
+@Builder
 @Table(name = "members")
 public class MemberEntity {
     @Id
@@ -33,6 +33,6 @@ public class MemberEntity {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "member",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "memberEntity", cascade = CascadeType.ALL)
     private List<LoanEntity> loanEntities =new ArrayList<>();
 }

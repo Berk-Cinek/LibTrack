@@ -1,17 +1,17 @@
-package com.berk.libtrack.domain;
+package com.berk.libtrack.domain.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Getter
 @Setter
+@Builder
 @Table(name = "books")
 public class BookEntity {
     @Id
@@ -19,7 +19,7 @@ public class BookEntity {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String isbn;
+    private Long isbn;
 
     @Column(nullable = false)
     private String title;
