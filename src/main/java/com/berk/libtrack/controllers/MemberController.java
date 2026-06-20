@@ -1,8 +1,6 @@
 package com.berk.libtrack.controllers;
 
-import com.berk.libtrack.domain.dto.LoanDto;
 import com.berk.libtrack.domain.dto.MemberDto;
-import com.berk.libtrack.domain.entities.LoanEntity;
 import com.berk.libtrack.domain.entities.MemberEntity;
 import com.berk.libtrack.mappers.MemberMapper;
 import com.berk.libtrack.services.MemberService;

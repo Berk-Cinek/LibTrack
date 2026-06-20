@@ -1,7 +1,5 @@
 package com.berk.libtrack.domain.dto;
 
-import com.berk.libtrack.domain.entities.LoanEntity;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

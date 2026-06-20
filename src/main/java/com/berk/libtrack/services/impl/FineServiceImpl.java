@@ -3,7 +3,6 @@ package com.berk.libtrack.services.impl;
 import com.berk.libtrack.domain.entities.FineEntity;
 import com.berk.libtrack.repositories.FineRepository;
 import com.berk.libtrack.services.FineService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;

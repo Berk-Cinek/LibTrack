@@ -1,6 +1,5 @@
 package com.berk.libtrack.services.impl;
 
-import com.berk.libtrack.domain.dto.BookDto;
 import com.berk.libtrack.domain.entities.BookEntity;
 import com.berk.libtrack.repositories.BookRepository;
 import com.berk.libtrack.services.BookService;

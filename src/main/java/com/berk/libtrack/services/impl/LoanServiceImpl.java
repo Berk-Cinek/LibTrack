@@ -1,7 +1,6 @@
 package com.berk.libtrack.services.impl;
 
 import com.berk.libtrack.domain.entities.LoanEntity;
-import com.berk.libtrack.mappers.LoanMapper;
 import com.berk.libtrack.repositories.LoanRepository;
 import com.berk.libtrack.services.LoanService;
 import org.springframework.stereotype.Service;
