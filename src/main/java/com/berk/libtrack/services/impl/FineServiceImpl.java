@@ -3,9 +3,15 @@ package com.berk.libtrack.services.impl;
 import com.berk.libtrack.domain.entities.FineEntity;
 import com.berk.libtrack.repositories.FineRepository;
 import com.berk.libtrack.services.FineService;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class FineServiceImpl implements FineService {
@@ -17,6 +23,7 @@ public class FineServiceImpl implements FineService {
     }
 
     @Override
+    @CachePut(value = "FINE_CACHE", key = "#result.id()" )
     public FineEntity partialUpdate(Long id, FineEntity fineEntity) {
         fineEntity.setId(id);
 
@@ -31,6 +38,7 @@ public class FineServiceImpl implements FineService {
     }
 
     @Override
+    @CachePut(value = "FINE_CACHE", key = "#result.id()" )
     public FineEntity save(FineEntity fineEntity) {
         return fineRepository.save(fineEntity);
     }
@@ -41,7 +49,20 @@ public class FineServiceImpl implements FineService {
     }
 
     @Override
+    @CacheEvict(value = "FINE_CACHE", key = "#id")
     public void delete(Long id) {
         fineRepository.deleteById(id);
+    }
+
+    @Override
+    public List<FineEntity> findAll() {
+        return StreamSupport.stream(fineRepository.findAll().spliterator(), false)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Cacheable(value = "FINE_CHACE", key = "#id")
+    public Optional<FineEntity> findOne(Long id) {
+        return fineRepository.findById(id);
     }
 }

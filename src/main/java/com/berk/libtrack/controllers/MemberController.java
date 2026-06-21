@@ -8,6 +8,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 @RestController
 public class MemberController {
 
@@ -25,6 +29,23 @@ public class MemberController {
         MemberEntity memberEntity = memberMapper.mapFrom(memberDto);
         MemberEntity savedEntity = memberService.save(memberEntity);
         return new ResponseEntity<>(memberMapper.mapTo(savedEntity), HttpStatus.CREATED);
+    }
+
+    @GetMapping(path = "/members")
+    public List<MemberDto> listAuthors(){
+        List<MemberEntity> books = memberService.findAll();
+        return books.stream()
+                .map(memberMapper::mapTo)
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping(path = "member/{id}")
+    public ResponseEntity<MemberDto> getById(@PathVariable("id") Long id){
+        Optional<MemberEntity> foundMember = memberService.findOne(id);
+        return foundMember.map(memberEntity ->{
+            MemberDto memberDto = memberMapper.mapTo(memberEntity);
+            return new ResponseEntity<>(memberDto, HttpStatus.OK);
+        }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PutMapping(path = "/members/{id}")

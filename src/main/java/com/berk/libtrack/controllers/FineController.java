@@ -8,6 +8,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 @RestController
 public class FineController {
 
@@ -24,6 +28,23 @@ public class FineController {
         FineEntity fineEntity = fineMapper.mapFrom(fineDto);
         FineEntity savedEntity = fineService.save(fineEntity);
         return new ResponseEntity<>(fineMapper.mapTo(savedEntity), HttpStatus.CREATED);
+    }
+
+    @GetMapping(path = "/fines")
+    public List<FineDto> listAuthors(){
+        List<FineEntity> books = fineService.findAll();
+        return books.stream()
+                .map(fineMapper::mapTo)
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping(path = "/fines/{id}")
+    public ResponseEntity<FineDto> getById(@PathVariable("id") Long id){
+        Optional<FineEntity> foundFine = fineService.findOne(id);
+        return foundFine.map(fineEntity -> {
+            FineDto fineDto = fineMapper.mapTo(fineEntity);
+            return new ResponseEntity(fineDto, HttpStatus.OK);
+        }).orElse(new ResponseEntity(HttpStatus.NOT_FOUND));
     }
 
     @PutMapping(path = "/fines/{id}")

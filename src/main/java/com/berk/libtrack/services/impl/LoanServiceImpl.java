@@ -3,20 +3,29 @@ package com.berk.libtrack.services.impl;
 import com.berk.libtrack.domain.entities.LoanEntity;
 import com.berk.libtrack.repositories.LoanRepository;
 import com.berk.libtrack.services.LoanService;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class LoanServiceImpl implements LoanService {
 
+    private final LoanService loanService;
     private LoanRepository loanRepository;
 
-    public LoanServiceImpl(LoanRepository loanRepository) {
+    public LoanServiceImpl(LoanRepository loanRepository, LoanService loanService) {
         this.loanRepository = loanRepository;
+        this.loanService = loanService;
     }
 
     @Override
+    @CachePut(value = "LOAN_CACHE", key = "#result.id()" )
     public LoanEntity save(LoanEntity loanEntity) {
         return loanRepository.save(loanEntity);
     }
@@ -27,6 +36,7 @@ public class LoanServiceImpl implements LoanService {
     }
 
     @Override
+    @CachePut(value = "LOAN_CACHE", key = "#result.id()" )
     public LoanEntity partialUpdate(Long id, LoanEntity loanEntity) {
         loanEntity.setId(id);
 
@@ -42,7 +52,20 @@ public class LoanServiceImpl implements LoanService {
     }
 
     @Override
+    @CacheEvict(value = "LOAN_CACHE", key = "#id")
     public void delete(Long id) {
         loanRepository.deleteById(id);
+    }
+
+    @Override
+    public List<LoanEntity> findAll() {
+        return StreamSupport.stream(loanRepository.findAll().spliterator(), false)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Cacheable(value = "LOAN_CACHE", key = "#id")
+    public Optional<LoanEntity> findOne(Long id) {
+        return loanRepository.findById(id);
     }
 }
