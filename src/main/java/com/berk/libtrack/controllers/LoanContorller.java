@@ -26,7 +26,7 @@ public class LoanContorller {
     @PostMapping(path = "/loans")
     public ResponseEntity<LoanDto> createLoan(@RequestBody LoanDto loanDto){
         LoanEntity loanEntity = loanMapper.mapFrom(loanDto);
-        LoanEntity savedEntity = loanService.save(loanEntity);
+        LoanEntity savedEntity = loanService.loanCreate(loanEntity);
         return new ResponseEntity<>(loanMapper.mapTo(savedEntity), HttpStatus.CREATED);
     }
 

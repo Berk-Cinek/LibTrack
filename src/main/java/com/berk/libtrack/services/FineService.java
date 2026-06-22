@@ -9,6 +9,7 @@ import java.util.Optional;
 
 public interface FineService {
 
+
     FineEntity partialUpdate(Long id, FineEntity fineEntity);
 
     FineEntity save(FineEntity fineEntity);

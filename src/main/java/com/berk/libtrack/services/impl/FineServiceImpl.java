@@ -1,6 +1,7 @@
 package com.berk.libtrack.services.impl;
 
 import com.berk.libtrack.domain.entities.FineEntity;
+import com.berk.libtrack.domain.entities.LoanStatus;
 import com.berk.libtrack.repositories.FineRepository;
 import com.berk.libtrack.services.FineService;
 import org.springframework.cache.annotation.CacheEvict;
@@ -8,13 +9,18 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class FineServiceImpl implements FineService {
+    //not a good design choice have to declare them in 2 sepearet locations
+    private static final Integer OVERDUE_FEE = 2;
 
     private FineRepository fineRepository;
 
@@ -22,6 +28,7 @@ public class FineServiceImpl implements FineService {
 
         this.fineRepository = fineRepository;
     }
+
 
     @Override
     @CachePut(value = "FINE_CACHE", key = "#result.id()" )
@@ -69,5 +76,21 @@ public class FineServiceImpl implements FineService {
     @Cacheable(value = "FINE_CHACE", key = "#id")
     public Optional<FineEntity> findOne(Long id) {
         return fineRepository.findById(id);
+    }
+
+    @Scheduled(cron = "0 0 0 * * *")
+    public void updateFine(){
+        var due = fineRepository.findByLoanEntityStatus(LoanStatus.OVERDUE);
+
+        for(FineEntity fine: due){
+            if (Boolean.TRUE.equals(fine.getIsPaid())) continue;
+
+            Integer daysOverdue =Math.toIntExact(
+                    ChronoUnit.DAYS.between(fine.getLoanEntity().getDueDate(), LocalDate.now()));
+
+            fine.setDaysOverdue(fine.getDaysOverdue() + 1);
+            fine.setAmount(daysOverdue * OVERDUE_FEE);
+
+        }
     }
 }
