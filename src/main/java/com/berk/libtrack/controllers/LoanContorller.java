@@ -4,6 +4,8 @@ import com.berk.libtrack.domain.dto.LoanDto;
 import com.berk.libtrack.domain.entities.LoanEntity;
 import com.berk.libtrack.mappers.LoanMapper;
 import com.berk.libtrack.services.LoanService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
+@Tag(name = "Loans", description = "Basic CRUD functionality for Fines + pagination for return-all")
 @RestController
 public class LoanContorller {
 
@@ -23,19 +26,21 @@ public class LoanContorller {
         this.loanMapper = loanMapper;
     }
 
+    @Operation(summary = "Create a Loans", description = "Adds a new book to the catalog." +
+            " Fields: id, member(FK), book(FK), borrowedAt, dueDate, returnedAt, status.")
     @PostMapping(path = "/loans")
     public ResponseEntity<LoanDto> createLoan(@RequestBody LoanDto loanDto){
         LoanEntity loanEntity = loanMapper.mapFrom(loanDto);
         LoanEntity savedEntity = loanService.loanCreate(loanEntity);
         return new ResponseEntity<>(loanMapper.mapTo(savedEntity), HttpStatus.CREATED);
     }
-
+    @Operation(summary = "Get all Loan", description = "Get all Loan with pagination")
     @GetMapping(path = "/loans")
     public Page<LoanDto> listLoans(Pageable pageable){
         Page<LoanEntity> loans = loanService.findAll(pageable);
         return loans.map(loanMapper::mapTo);
     }
-
+    @Operation(summary = "Get one Loan", description = "Get one Loan based on id match")
     @GetMapping(path = "/loans/{id}")
     public ResponseEntity<LoanDto> getById(@PathVariable("id") Long id) {
         Optional<LoanEntity> foundLoan = loanService.findOne(id);
@@ -44,7 +49,7 @@ public class LoanContorller {
             return new ResponseEntity<>(loanDto, HttpStatus.OK);
         }).orElse( new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
-
+    @Operation(summary = "Fully update Loan", description = "Fully update one Loan based on id match")
     @PutMapping(path = "/loans/{id}")
     public ResponseEntity<LoanDto> fullUpdate(@PathVariable("id") Long id, @RequestBody LoanDto loanDto){
         if (!loanService.isExists(id)){
@@ -56,7 +61,8 @@ public class LoanContorller {
         LoanEntity savedLoanEntity = loanService.save(loanEntity);
         return new ResponseEntity<>(loanMapper.mapTo(savedLoanEntity), HttpStatus.OK);
     }
-
+    @Operation(summary = "Partial update Loan", description = "Partially update one Loan based on id match, " +
+            "any given value will change those which are not given stay the same")
     @PatchMapping(path = "/loans/{id}")
     public ResponseEntity<LoanDto> partialUpdate(@PathVariable("id") Long id, @RequestBody LoanDto loanDto){
         if (!loanService.isExists(id)){
@@ -67,7 +73,7 @@ public class LoanContorller {
         LoanEntity updatedLoan = loanService.partialUpdate(id, loanEntity);
         return new ResponseEntity<>(loanMapper.mapTo(updatedLoan), HttpStatus.OK);
     }
-
+    @Operation(summary = "Delete Loan", description = "Delete Loan based on id match")
     @DeleteMapping(path = "loans/{id}")
     public ResponseEntity deleteLoan(@PathVariable("id") Long id){
         if (!loanService.isExists(id)) {

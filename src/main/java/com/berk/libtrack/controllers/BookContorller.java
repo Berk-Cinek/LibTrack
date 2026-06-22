@@ -4,6 +4,9 @@ import com.berk.libtrack.domain.dto.BookDto;
 import com.berk.libtrack.domain.entities.BookEntity;
 import com.berk.libtrack.mappers.Mapper;
 import com.berk.libtrack.services.BookService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.models.OpenAPI;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -11,17 +14,29 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
-
+@Tag(name = "Books", description = "Basic CRUD functionality for Books + pagination for return-all")
 @RestController
 public class BookContorller {
 
+    private final OpenAPI openAPI;
     private BookService bookService;
     private Mapper<BookEntity, BookDto> bookMapper;
 
-    public BookContorller(BookService bookService, Mapper<BookEntity, BookDto> bookMapper){
+    public BookContorller(BookService bookService, Mapper<BookEntity, BookDto> bookMapper, OpenAPI openAPI){
         this.bookService = bookService;
         this.bookMapper = bookMapper;
+        this.openAPI = openAPI;
     }
+
+    @Operation(summary = "Create a Book", description = "Adds a new book to the catalog." +
+            " Fields: isbn, title, author, genre, totalCopies, availableCopies.")
+    /*
+    @ApiResponses({
+    @ApiResponse(responseCode = "201", description = "Loan created"),
+    @ApiResponse(responseCode = "409", description = "Loan limit, unpaid fine, already has this book, or out of stock"),
+    @ApiResponse(responseCode = "404", description = "Member or book not found")
+    })
+     */
 
     @PostMapping(path = "/books")
     public ResponseEntity<BookDto> createBook(@RequestBody BookDto  book){
@@ -30,12 +45,14 @@ public class BookContorller {
         return new ResponseEntity<>(bookMapper.mapTo(savedBookEntity),HttpStatus.CREATED);
     }
 
+    @Operation(summary = "Get all Books", description = "Get all Books with pagination")
     @GetMapping(path = "/books")
     public Page<BookDto> listBooks(Pageable pageable){
        Page<BookEntity> books = bookService.findAll(pageable);
        return books.map(bookMapper::mapTo);
     }
 
+    @Operation(summary = "Get one Book", description = "Get one Book based on id match")
     @GetMapping(path = "/books/{id}")
     public ResponseEntity<BookDto> getById(@PathVariable("id") Long id){
         Optional<BookEntity> foundBook = bookService.findOne(id);
@@ -45,6 +62,7 @@ public class BookContorller {
         }).orElse(new ResponseEntity(HttpStatus.NOT_FOUND));
     }
 
+    @Operation(summary = "Fully update Book", description = "Fully update one Book based on id match")
     @PutMapping(path = "/books/{id}")
     public ResponseEntity<BookDto> fullUpdate(@PathVariable("id") Long id, @RequestBody BookDto bookDto){
         if (!bookService.isExists(id)){
@@ -56,7 +74,8 @@ public class BookContorller {
         BookEntity savedBookEntity = bookService.save(bookEntity);
         return new ResponseEntity<>(bookMapper.mapTo(savedBookEntity), HttpStatus.OK);
     }
-
+    @Operation(summary = "Partial update Book", description = "Partially update one Book based on id match, " +
+            "any given value will change those which are not given stay the same")
     @PatchMapping(path = "books/{id}")
     public ResponseEntity<BookDto> partialUpdate(@PathVariable("id") Long id, @RequestBody BookDto bookDto){
         if (!bookService.isExists(id)){
@@ -67,7 +86,7 @@ public class BookContorller {
         BookEntity updatedBook = bookService.partialUpdate(id, bookEntity);
         return new ResponseEntity<>(bookMapper.mapTo(updatedBook), HttpStatus.OK);
     }
-
+    @Operation(summary = "Delete Book", description = "Delete Book based on matching id")
     @DeleteMapping(path = "books/{id}")
     public ResponseEntity deleteBook(@PathVariable("id") Long id){
         if (!bookService.isExists(id)) {
