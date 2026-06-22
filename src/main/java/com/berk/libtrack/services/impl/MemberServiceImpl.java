@@ -6,12 +6,12 @@ import com.berk.libtrack.services.MemberService;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Service
 public class MemberServiceImpl implements MemberService {
@@ -56,8 +56,12 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public List<MemberEntity> findAll() {
-        return StreamSupport.stream(memberRepository.findAll().spliterator(), false)
-                .collect(Collectors.toList());
+        return memberRepository.findAll();
+    }
+
+    @Override
+    public Page<MemberEntity> findAll(Pageable pageable) {
+        return memberRepository.findAll(pageable);
     }
 
     @Override

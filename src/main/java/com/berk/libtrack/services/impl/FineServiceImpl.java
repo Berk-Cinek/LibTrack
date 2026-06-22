@@ -6,12 +6,12 @@ import com.berk.libtrack.services.FineService;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Service
 public class FineServiceImpl implements FineService {
@@ -19,6 +19,7 @@ public class FineServiceImpl implements FineService {
     private FineRepository fineRepository;
 
     public FineServiceImpl(FineRepository fineRepository) {
+
         this.fineRepository = fineRepository;
     }
 
@@ -56,8 +57,12 @@ public class FineServiceImpl implements FineService {
 
     @Override
     public List<FineEntity> findAll() {
-        return StreamSupport.stream(fineRepository.findAll().spliterator(), false)
-                .collect(Collectors.toList());
+        return fineRepository.findAll();
+    }
+
+    @Override
+    public Page<FineEntity> findAll(Pageable pageable) {
+        return fineRepository.findAll(pageable);
     }
 
     @Override

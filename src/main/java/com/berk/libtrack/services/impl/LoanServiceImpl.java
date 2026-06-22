@@ -6,22 +6,20 @@ import com.berk.libtrack.services.LoanService;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Service
 public class LoanServiceImpl implements LoanService {
 
-    private final LoanService loanService;
     private LoanRepository loanRepository;
 
-    public LoanServiceImpl(LoanRepository loanRepository, LoanService loanService) {
+    public LoanServiceImpl(LoanRepository loanRepository) {
         this.loanRepository = loanRepository;
-        this.loanService = loanService;
     }
 
     @Override
@@ -59,8 +57,12 @@ public class LoanServiceImpl implements LoanService {
 
     @Override
     public List<LoanEntity> findAll() {
-        return StreamSupport.stream(loanRepository.findAll().spliterator(), false)
-                .collect(Collectors.toList());
+        return loanRepository.findAll();
+    }
+
+    @Override
+    public Page<LoanEntity> findAll(Pageable pageable) {
+        return loanRepository.findAll(pageable);
     }
 
     @Override

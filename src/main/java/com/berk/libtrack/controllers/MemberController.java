@@ -4,13 +4,13 @@ import com.berk.libtrack.domain.dto.MemberDto;
 import com.berk.libtrack.domain.entities.MemberEntity;
 import com.berk.libtrack.mappers.MemberMapper;
 import com.berk.libtrack.services.MemberService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 public class MemberController {
@@ -32,11 +32,9 @@ public class MemberController {
     }
 
     @GetMapping(path = "/members")
-    public List<MemberDto> listAuthors(){
-        List<MemberEntity> books = memberService.findAll();
-        return books.stream()
-                .map(memberMapper::mapTo)
-                .collect(Collectors.toList());
+    public Page<MemberDto> listMembers(Pageable pageable){
+        Page<MemberEntity> members = memberService.findAll(pageable);
+        return members.map(memberMapper::mapTo);
     }
 
     @GetMapping(path = "member/{id}")

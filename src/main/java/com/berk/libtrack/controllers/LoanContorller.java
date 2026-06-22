@@ -4,13 +4,13 @@ import com.berk.libtrack.domain.dto.LoanDto;
 import com.berk.libtrack.domain.entities.LoanEntity;
 import com.berk.libtrack.mappers.LoanMapper;
 import com.berk.libtrack.services.LoanService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 public class LoanContorller {
@@ -31,11 +31,9 @@ public class LoanContorller {
     }
 
     @GetMapping(path = "/loans")
-    public List<LoanDto> listAuthors(){
-        List<LoanEntity> books = loanService.findAll();
-        return books.stream()
-                .map(loanMapper::mapTo)
-                .collect(Collectors.toList());
+    public Page<LoanDto> listLoans(Pageable pageable){
+        Page<LoanEntity> loans = loanService.findAll(pageable);
+        return loans.map(loanMapper::mapTo);
     }
 
     @GetMapping(path = "/loans/{id}")

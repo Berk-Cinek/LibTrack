@@ -4,13 +4,13 @@ import com.berk.libtrack.domain.dto.FineDto;
 import com.berk.libtrack.domain.entities.FineEntity;
 import com.berk.libtrack.mappers.FineMapper;
 import com.berk.libtrack.services.FineService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 public class FineController {
@@ -31,11 +31,9 @@ public class FineController {
     }
 
     @GetMapping(path = "/fines")
-    public List<FineDto> listAuthors(){
-        List<FineEntity> books = fineService.findAll();
-        return books.stream()
-                .map(fineMapper::mapTo)
-                .collect(Collectors.toList());
+    public Page<FineDto> listFines(Pageable pageable){
+        Page<FineEntity> fines = fineService.findAll(pageable);
+        return fines.map(fineMapper::mapTo);
     }
 
     @GetMapping(path = "/fines/{id}")
