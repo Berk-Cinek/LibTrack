@@ -2,6 +2,7 @@ package com.berk.libtrack.controllers;
 
 import com.berk.libtrack.domain.dto.FineDto;
 import com.berk.libtrack.domain.entities.FineEntity;
+import com.berk.libtrack.exceptions.ResourceNotFoundException;
 import com.berk.libtrack.mappers.FineMapper;
 import com.berk.libtrack.services.FineService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,6 +26,7 @@ public class FineController {
         this.fineMapper = fineMapper;
         this.fineService = fineService;
     }
+
     @Operation(summary = "Create a Book", description = "Adds a new fine to the catalog." +
             "Fields: id, loan(FK), daysOverDue, amount, isPaid, PaidAt.")
     @PostMapping(path = "/fines")
@@ -33,26 +35,30 @@ public class FineController {
         FineEntity savedEntity = fineService.save(fineEntity);
         return new ResponseEntity<>(fineMapper.mapTo(savedEntity), HttpStatus.CREATED);
     }
+
     @Operation(summary = "Get all Fines", description = "Get all Fines with pagination")
     @GetMapping(path = "/fines")
     public Page<FineDto> listFines(Pageable pageable){
         Page<FineEntity> fines = fineService.findAll(pageable);
         return fines.map(fineMapper::mapTo);
     }
+
     @Operation(summary = "Get one Fine", description = "Get one Fine based on id match")
     @GetMapping(path = "/fines/{id}")
     public ResponseEntity<FineDto> getById(@PathVariable("id") Long id){
+
         Optional<FineEntity> foundFine = fineService.findOne(id);
         return foundFine.map(fineEntity -> {
             FineDto fineDto = fineMapper.mapTo(fineEntity);
             return new ResponseEntity(fineDto, HttpStatus.OK);
         }).orElse(new ResponseEntity(HttpStatus.NOT_FOUND));
     }
+
     @Operation(summary = "Fully update Fine", description = "Fully update one Fine based on id match")
     @PutMapping(path = "/fines/{id}")
     public ResponseEntity<FineDto> fullUpdate(@PathVariable("id") Long id, @RequestBody FineDto fineDto){
         if (!fineService.isExists(id)){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new ResourceNotFoundException("Fine with id:" + id + "not found for full update");
         }
 
         fineDto.setId(id);
@@ -60,12 +66,13 @@ public class FineController {
         FineEntity savedFineEntity = fineService.save(fineEntity);
         return new ResponseEntity<>(fineMapper.mapTo(savedFineEntity), HttpStatus.OK);
     }
+
     @Operation(summary = "Partial update Fine", description = "Partially update one Fine based on id match, " +
             "any given value will change those which are not given will stay the same")
     @PatchMapping(path = "fines/{id}")
     public ResponseEntity<FineDto> partialUpdate(@PathVariable("id") Long id, @RequestBody FineDto fineDto){
         if (!fineService.isExists(id)){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new ResourceNotFoundException("Fine with id:" + id + "not found for partial update");
         }
 
         FineEntity fineEntity = fineMapper.mapFrom(fineDto);
@@ -76,7 +83,7 @@ public class FineController {
     @DeleteMapping(path = "fines/{id}")
     public ResponseEntity deleteFine(@PathVariable("id") Long id){
         if (!fineService.isExists(id)) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new ResourceNotFoundException("Fine with id:" + id + "not found for deletion");
         }
 
         fineService.delete(id);

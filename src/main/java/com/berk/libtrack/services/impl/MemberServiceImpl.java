@@ -1,6 +1,7 @@
 package com.berk.libtrack.services.impl;
 
 import com.berk.libtrack.domain.entities.MemberEntity;
+import com.berk.libtrack.exceptions.ResourceNotFoundException;
 import com.berk.libtrack.repositories.MemberRepository;
 import com.berk.libtrack.services.MemberService;
 import org.springframework.cache.annotation.CacheEvict;
@@ -45,7 +46,7 @@ public class MemberServiceImpl implements MemberService {
             Optional.ofNullable(existingMember.getEmail()).ifPresent(existingMember::setEmail);
             Optional.ofNullable(existingMember.getIsActive()).ifPresent(existingMember::setIsActive);
             return memberRepository.save(existingMember);
-        }).orElseThrow(() -> new RuntimeException("Non Existing Member"));
+        }).orElseThrow(() -> new ResourceNotFoundException("Non Existing Member with id:" + id));
     }
 
     @Override

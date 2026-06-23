@@ -2,6 +2,7 @@ package com.berk.libtrack.controllers;
 
 import com.berk.libtrack.domain.dto.BookDto;
 import com.berk.libtrack.domain.entities.BookEntity;
+import com.berk.libtrack.exceptions.ResourceNotFoundException;
 import com.berk.libtrack.mappers.Mapper;
 import com.berk.libtrack.services.BookService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,14 +19,12 @@ import java.util.Optional;
 @RestController
 public class BookContorller {
 
-    private final OpenAPI openAPI;
     private BookService bookService;
     private Mapper<BookEntity, BookDto> bookMapper;
 
     public BookContorller(BookService bookService, Mapper<BookEntity, BookDto> bookMapper, OpenAPI openAPI){
         this.bookService = bookService;
         this.bookMapper = bookMapper;
-        this.openAPI = openAPI;
     }
 
     @Operation(summary = "Create a Book", description = "Adds a new book to the catalog." +
@@ -55,6 +54,10 @@ public class BookContorller {
     @Operation(summary = "Get one Book", description = "Get one Book based on id match")
     @GetMapping(path = "/books/{id}")
     public ResponseEntity<BookDto> getById(@PathVariable("id") Long id){
+        if (!bookService.isExists(id)) {
+            throw new ResourceNotFoundException("Book with id:" + id + "not found for getById");
+        }
+
         Optional<BookEntity> foundBook = bookService.findOne(id);
         return foundBook.map(bookEntity -> {
             BookDto bookDto = bookMapper.mapTo(bookEntity);
@@ -66,7 +69,7 @@ public class BookContorller {
     @PutMapping(path = "/books/{id}")
     public ResponseEntity<BookDto> fullUpdate(@PathVariable("id") Long id, @RequestBody BookDto bookDto){
         if (!bookService.isExists(id)){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new ResourceNotFoundException("Book with id:" + id + "not found for full update");
         }
 
         bookDto.setId(id);
@@ -78,19 +81,17 @@ public class BookContorller {
             "any given value will change those which are not given stay the same")
     @PatchMapping(path = "books/{id}")
     public ResponseEntity<BookDto> partialUpdate(@PathVariable("id") Long id, @RequestBody BookDto bookDto){
-        if (!bookService.isExists(id)){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
 
         BookEntity bookEntity = bookMapper.mapFrom(bookDto);
         BookEntity updatedBook = bookService.partialUpdate(id, bookEntity);
         return new ResponseEntity<>(bookMapper.mapTo(updatedBook), HttpStatus.OK);
     }
+
     @Operation(summary = "Delete Book", description = "Delete Book based on matching id")
     @DeleteMapping(path = "books/{id}")
     public ResponseEntity deleteBook(@PathVariable("id") Long id){
         if (!bookService.isExists(id)) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new ResourceNotFoundException("Book with id:" + id + "not found for deletion");
         }
         
         bookService.delete(id);

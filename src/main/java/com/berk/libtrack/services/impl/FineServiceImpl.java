@@ -2,6 +2,7 @@ package com.berk.libtrack.services.impl;
 
 import com.berk.libtrack.domain.entities.FineEntity;
 import com.berk.libtrack.domain.entities.LoanStatus;
+import com.berk.libtrack.exceptions.ResourceNotFoundException;
 import com.berk.libtrack.repositories.FineRepository;
 import com.berk.libtrack.services.FineService;
 import org.springframework.cache.annotation.CacheEvict;
@@ -42,7 +43,7 @@ public class FineServiceImpl implements FineService {
             Optional.ofNullable(fineEntity.getIsPaid()).ifPresent(existingFine::setIsPaid);
             Optional.ofNullable(fineEntity.getPaidAt()).ifPresent(existingFine::setPaidAt);
             return fineRepository.save(existingFine);
-        }).orElseThrow(() -> new RuntimeException("Non Existing Fine"));
+        }).orElseThrow(() -> new ResourceNotFoundException("Non Existing Fine with id:" + id));
     }
 
     @Override

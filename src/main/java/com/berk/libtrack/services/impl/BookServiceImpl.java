@@ -1,6 +1,7 @@
 package com.berk.libtrack.services.impl;
 
 import com.berk.libtrack.domain.entities.BookEntity;
+import com.berk.libtrack.exceptions.ResourceNotFoundException;
 import com.berk.libtrack.repositories.BookRepository;
 import com.berk.libtrack.services.BookService;
 import org.springframework.cache.annotation.CacheEvict;
@@ -46,7 +47,7 @@ public class BookServiceImpl implements BookService {
             Optional.ofNullable(bookEntity.getTotalCopies()).ifPresent(existingBook::setTotalCopies);
             Optional.ofNullable(bookEntity.getAvailableCopies()).ifPresent(existingBook::setAvailableCopies);
             return bookRepository.save(existingBook);
-        }).orElseThrow(() -> new RuntimeException("Author does not exist"));
+        }).orElseThrow(() -> new ResourceNotFoundException("Book does not exist with id:" + id));
     }
 
     @Override

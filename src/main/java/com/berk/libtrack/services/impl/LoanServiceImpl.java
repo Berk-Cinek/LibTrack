@@ -1,6 +1,8 @@
 package com.berk.libtrack.services.impl;
 
 import com.berk.libtrack.domain.entities.*;
+import com.berk.libtrack.exceptions.BorrowingNotAllowedException;
+import com.berk.libtrack.exceptions.ResourceNotFoundException;
 import com.berk.libtrack.repositories.BookRepository;
 import com.berk.libtrack.repositories.LoanRepository;
 import com.berk.libtrack.services.LoanService;
@@ -9,11 +11,9 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -47,7 +47,7 @@ public class LoanServiceImpl implements LoanService {
 
         MemberEntity memberEntity = loanEntity.getMemberEntity();
         BookEntity bookEntity = bookRepository.findById(loanEntity.getBookEntity().getId())
-                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book not found"));
+                        .orElseThrow(() -> new BorrowingNotAllowedException("Book not found"));
 
 
         assertCanBorrow(memberEntity);
@@ -68,23 +68,22 @@ public class LoanServiceImpl implements LoanService {
         Long countActive = loanRepository.countByMemberEntityAndStatus(memberEntity, LoanStatus.ACTIVE);
         Long countOverDue = loanRepository.countByMemberEntityAndStatus(memberEntity, LoanStatus.OVERDUE);
         if (countOverDue >= 1) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Members with overdue books cannot borrow new ones");
+            throw new BorrowingNotAllowedException("Members with overdue books cannot borrow new ones");
         }else if (countActive >= 3) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Member already has 3 active loans");
+            throw new BorrowingNotAllowedException("Member already has 3 active loans");
         }
     }
 
     @Override
     public void assertInStock(BookEntity bookEntity) {
         if (bookEntity.getAvailableCopies() <= 0)
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "No available copies");
+            throw new BorrowingNotAllowedException("No available copies");
     }
 
     @Override
     public void assertNotAlreadyBorrowed(MemberEntity memberEntity, BookEntity bookEntity) {
         if (loanRepository.existsByMemberEntityAndBookEntityAndStatusNot(memberEntity, bookEntity, LoanStatus.RETURNED)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Member already has this book out");
-
+            throw new BorrowingNotAllowedException("Member already has this book out");
         }
     }
 
@@ -107,7 +106,7 @@ public class LoanServiceImpl implements LoanService {
             Optional.ofNullable(loanEntity.getReturnedAt()).ifPresent(existingLoan::setReturnedAt);
             Optional.ofNullable(loanEntity.getStatus()).ifPresent(existingLoan::setStatus);
             return loanRepository.save(existingLoan);
-        }).orElseThrow(() -> new RuntimeException("Non Existing loan"));
+        }).orElseThrow(() -> new ResourceNotFoundException("Non Existing loan id:" + id));
     }
 
     @Override

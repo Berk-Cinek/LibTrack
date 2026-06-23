@@ -2,6 +2,7 @@ package com.berk.libtrack.controllers;
 
 import com.berk.libtrack.domain.dto.MemberDto;
 import com.berk.libtrack.domain.entities.MemberEntity;
+import com.berk.libtrack.exceptions.ResourceNotFoundException;
 import com.berk.libtrack.mappers.MemberMapper;
 import com.berk.libtrack.services.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,17 +44,22 @@ public class MemberController {
     @Operation(summary = "Get one Member", description = "Get one Member based on id match")
     @GetMapping(path = "member/{id}")
     public ResponseEntity<MemberDto> getById(@PathVariable("id") Long id){
+        if (!memberService.isExists(id)) {
+            throw new ResourceNotFoundException("member with id:" + id + "not found for getById");
+        }
+
         Optional<MemberEntity> foundMember = memberService.findOne(id);
         return foundMember.map(memberEntity ->{
             MemberDto memberDto = memberMapper.mapTo(memberEntity);
             return new ResponseEntity<>(memberDto, HttpStatus.OK);
         }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
+
     @Operation(summary = "Fully update Member", description = "Fully update one Member based on id match")
     @PutMapping(path = "/members/{id}")
     public ResponseEntity<MemberDto> fullUpdate(@PathVariable("id") Long id, @RequestBody MemberDto memberDto){
         if (!memberService.isExists(id)){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new ResourceNotFoundException("member with id:" + id + "not found for full update");
         }
 
         memberDto.setId(id);
@@ -66,9 +72,6 @@ public class MemberController {
             "any given value will change those which are not given stay the same")
     @PatchMapping(path = "/members/{id}")
     public ResponseEntity<MemberDto> partialUpdate(@PathVariable("id") Long id, @RequestBody MemberDto memberDto){
-        if (!memberService.isExists(id)){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
 
         MemberEntity memberEntity = memberMapper.mapFrom(memberDto);
         MemberEntity updatedMember = memberService.partialUpdate(id, memberEntity);
@@ -79,7 +82,7 @@ public class MemberController {
     @DeleteMapping(path = "members/{id}")
     public ResponseEntity deleteMember(@PathVariable("id") Long id){
         if (!memberService.isExists(id)) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new ResourceNotFoundException("member with id:" + id + "not found for deletion");
         }
 
         memberService.delete(id);
