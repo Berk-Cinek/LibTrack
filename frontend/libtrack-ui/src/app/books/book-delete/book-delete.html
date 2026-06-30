@@ -1,0 +1,6 @@
+<h1>Delete A Book By Id</h1>
+
+<input #idBox type="number" placeholder="Enter an ID"
+       (input)="currentId.set(idBox.value)"/>
+
+<button (click)="deleteBook(idBox.value)" [disabled]="!currentId()"> Delete </button>
