@@ -15,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
+
+@CrossOrigin(origins = "http://localhost:4200")
 @Tag(name = "Books", description = "Basic CRUD functionality for Books + pagination for return-all")
 @RestController
 public class BookContorller {

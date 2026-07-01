@@ -17,6 +17,10 @@ export class BookApi {
     return this.http.get<Book>(`${this.baseUrl}/${id}`);
   }
 
+  createBook(created: Partial<Book>): Observable<Book>{
+    return this.http.post<Book>(this.baseUrl, created);
+  }
+
   bookPartialUpdate(id: number, changes: Partial<Book>) : Observable<Book>{
     return this.http.patch<Book>(`${this.baseUrl}/${id}`, changes)
   }

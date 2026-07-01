@@ -1,0 +1,10 @@
+<h1>List of Members</h1>
+<ul>
+  @for (member of members(); track member.id) {
+    <li> Member Number:{{member.memberNo}} - {{member.fullName}}, ID: {{member.id}}<br>
+      Email:{{ member.email }} <br>
+      Active: {{ member.isActive }} <br>
+      Created at: {{member.createdAt}}
+    </li>
+  }
+</ul>

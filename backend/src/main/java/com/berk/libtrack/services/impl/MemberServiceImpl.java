@@ -41,10 +41,10 @@ public class MemberServiceImpl implements MemberService {
         memberEntity.setId(id);
 
         return memberRepository.findById(id).map(existingMember ->{
-            Optional.ofNullable(existingMember.getMemberNo()).ifPresent(existingMember::setMemberNo);
-            Optional.ofNullable(existingMember.getFullName()).ifPresent(existingMember::setFullName);
-            Optional.ofNullable(existingMember.getEmail()).ifPresent(existingMember::setEmail);
-            Optional.ofNullable(existingMember.getIsActive()).ifPresent(existingMember::setIsActive);
+            Optional.ofNullable(memberEntity.getMemberNo()).ifPresent(existingMember::setMemberNo);
+            Optional.ofNullable(memberEntity.getFullName()).ifPresent(existingMember::setFullName);
+            Optional.ofNullable(memberEntity.getEmail()).ifPresent(existingMember::setEmail);
+            Optional.ofNullable(memberEntity.getIsActive()).ifPresent(existingMember::setIsActive);
             return memberRepository.save(existingMember);
         }).orElseThrow(() -> new ResourceNotFoundException("Non Existing Member with id:" + id));
     }

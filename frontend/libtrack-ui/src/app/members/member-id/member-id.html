@@ -1,0 +1,13 @@
+<h1>Member By Id!</h1>
+
+<input #idBox type="number" placeholder="Enter an ID"
+       (input)="currentId.set(idBox.value)"/>
+
+<button (click)="getmemberById(idBox.value)" [disabled]="!currentId()"> Find </button>
+
+@if (member()) {
+  <li> {{ member()!.fullName }} No: {{ member()!.memberNo }} ID: {{member()!.id}} <br>
+    Email:{{ member()!.email }}, Active Member:{{ member()!.isActive }} <br>
+    Created at: {{ member()!.createdAt }}
+  </li>
+}

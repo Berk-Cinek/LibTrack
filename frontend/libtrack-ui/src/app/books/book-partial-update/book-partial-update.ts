@@ -1,5 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule} from  '@angular/forms';
+import { formToPartialBook } from '../book-mapper';
 import { BookApi } from '../book-api';
 import { Book } from '../book';
 
@@ -26,14 +27,7 @@ export class BookPartialUpdate {
   })
 
   submit(id: string){
-    const all = this.bookForm.value;
-    const changes: Partial<Book> = {};
-    for (const key in all) {
-      const value = (all as any)[key];
-      if (value !== '' && value !== null) {
-        (changes as any)[key] = value;
-      }
-    }
+    const changes = formToPartialBook(this.bookForm.value);
     this.partialUpdate(id, changes);
   }
 
@@ -48,7 +42,4 @@ export class BookPartialUpdate {
       },
     })
   }
-
-
-
 }

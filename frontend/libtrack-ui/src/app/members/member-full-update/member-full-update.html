@@ -1,0 +1,20 @@
+<h1>Fully Update a Member</h1>
+
+<input #idBox type="number" placeholder="Enter an ID"
+       (input)="currentId.set(idBox.value)"/>
+
+<form [formGroup]="memberForm">
+  <input type="number" formControlName="memberNo" placeholder="Member Number"/>
+  <input type="text" formControlName="fullName" placeholder="Full Name">
+  <input type="text" formControlName="email" placeholder="Email">
+  <input type="checkbox" formControlName="isActive" placeholder="Active">
+
+  <button (click)="fullUpdateMember(idBox.value)" [disabled]="!currentId() ||memberForm.invalid"> Submit </button>
+</form>
+
+@if (member()) {
+  <li> {{ member()!.fullName }} No: {{ member()!.memberNo }} <br>
+    Email:{{ member()!.email }}, Active Member:{{ member()!.isActive }} <br>
+    Created at: {{ member()!.createdAt }}
+  </li>
+}

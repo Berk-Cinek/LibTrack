@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @Tag(name = "Members", description = "Basic CRUD functionality for Members + pagination for return-all")
 @RestController
 public class MemberController {

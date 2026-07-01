@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule} from  '@angular/forms';
 import { Validators } from '@angular/forms';
+import { formToBook } from '../book-mapper'
 import { BookApi } from '../book-api';
 import { Book } from '../book';
 
@@ -27,12 +28,10 @@ export class BookFullUpdate {
   })
 
   fullUpdateBook(id: String){
-
-    console.log('id received:', id);
     if (this.bookForm.invalid){
       return alert("please fill all the provided fields")
     }
-    const changes = this.toBook(this.bookForm.value);
+    const changes = formToBook(this.bookForm.value);
     this.bookApi.bookFullUpdate(Number(id), changes).subscribe({
       next: updatedBook => {
         alert('Updated successfully');
@@ -42,18 +41,5 @@ export class BookFullUpdate {
         alert('Update failed - please try again');
       },
     })
-  }
-
-  private toBook(formValue: any): Partial<Book> {
-    const book: Partial<Book> = {};
-    if (formValue.title)  book.title  = formValue.title;
-    if (formValue.author) book.author = formValue.author;
-    if (formValue.genre)  book.genre  = formValue.genre;
-
-    if (formValue.isbn)            book.isbn            = Number(formValue.isbn);
-    if (formValue.totalCopies)     book.totalCopies     = Number(formValue.totalCopies);
-    if (formValue.availableCopies) book.availableCopies = Number(formValue.availableCopies);
-
-    return book;
   }
 }
