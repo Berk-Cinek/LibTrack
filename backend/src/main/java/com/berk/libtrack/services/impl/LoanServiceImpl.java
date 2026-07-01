@@ -3,6 +3,7 @@ package com.berk.libtrack.services.impl;
 import com.berk.libtrack.domain.entities.*;
 import com.berk.libtrack.exceptions.BorrowingNotAllowedException;
 import com.berk.libtrack.exceptions.ResourceNotFoundException;
+import com.berk.libtrack.repositories.MemberRepository;
 import com.berk.libtrack.repositories.BookRepository;
 import com.berk.libtrack.repositories.LoanRepository;
 import com.berk.libtrack.services.LoanService;
@@ -27,12 +28,14 @@ public class LoanServiceImpl implements LoanService {
     private static final Integer LOAN_PERIOD_DAYS = 14;
     private static final Integer OVERDUE_FEE = 2;
 
+    private MemberRepository memberRepository;
     private  BookRepository bookRepository;
     private LoanRepository loanRepository;
 
-    public LoanServiceImpl(LoanRepository loanRepository, BookRepository bookRepository) {
+    public LoanServiceImpl(LoanRepository loanRepository, BookRepository bookRepository, MemberRepository memberRepository) {
         this.loanRepository = loanRepository;
         this.bookRepository = bookRepository;
+        this.memberRepository = memberRepository;
     }
 
     @Override
@@ -45,7 +48,8 @@ public class LoanServiceImpl implements LoanService {
     @Transactional
     public LoanEntity loanCreate(LoanEntity loanEntity) {
 
-        MemberEntity memberEntity = loanEntity.getMemberEntity();
+        MemberEntity memberEntity = memberRepository.findById(loanEntity.getMemberEntity().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Member not found"));
         BookEntity bookEntity = bookRepository.findById(loanEntity.getBookEntity().getId())
                         .orElseThrow(() -> new BorrowingNotAllowedException("Book not found"));
 
@@ -55,6 +59,7 @@ public class LoanServiceImpl implements LoanService {
 
         bookEntity.setAvailableCopies(bookEntity.getAvailableCopies() - 1);
 
+        loanEntity.setMemberEntity(memberEntity);
         loanEntity.setBookEntity(bookEntity);
         loanEntity.setBorrowedAt(LocalDateTime.now());
         loanEntity.setDueDate(LocalDateTime.now().plusDays(LOAN_PERIOD_DAYS));

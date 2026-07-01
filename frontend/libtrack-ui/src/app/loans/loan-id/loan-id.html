@@ -1,0 +1,17 @@
+<h1>Look up a Loan by ID</h1>
+<input #idBox type="number" placeholder="Enter an ID"
+       (input)="currentId.set(idBox.value)"/>
+
+<button (click)="loanById(idBox.value)" [disabled]="!currentId()"> Find </button>
+
+@if (loan()) {
+  <li>
+    ID:{{ loan()!.id }}, Member Id:{{loan()!.memberId}} - Book:{{loan()!.bookDto.title}} <br>
+    Borrowed At:{{loan()!.borrowedAt}} <br>
+
+    @if (loan()!.returnedAt) {
+      Returned At:{{loan()!.returnedAt}} <br>
+    }
+    Status: {{loan()!.status}}
+  </li>
+}

@@ -1,0 +1,10 @@
+<h1>Delete a Loan</h1>
+
+<input #idBox type="number" placeholder="Enter a Loan ID"
+       (input)="currentId.set(idBox.value)"/>
+
+<button (click)="deleteLoan(idBox.value)" [disabled]="!currentId()">Delete</button>
+
+@if (message()) {
+  <p>{{ message() }}</p>
+}

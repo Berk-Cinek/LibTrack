@@ -1,6 +1,7 @@
 package com.berk.libtrack.mappers;
 
 import com.berk.libtrack.domain.dto.LoanDto;
+import com.berk.libtrack.domain.entities.BookEntity;
 import com.berk.libtrack.domain.entities.LoanEntity;
 import com.berk.libtrack.domain.entities.MemberEntity;
 import org.springframework.stereotype.Component;
@@ -31,13 +32,22 @@ public class LoanMapper implements Mapper<LoanEntity, LoanDto> {
     @Override
     public LoanEntity mapFrom(LoanDto loanDto) {
         // there must be a better way of doing this
-        MemberEntity memberRef =new MemberEntity();
-        memberRef.setId(loanDto.getMemberId());
+        MemberEntity memberRef = null;
+        if (loanDto.getMemberId() != null) {
+            memberRef = new MemberEntity();
+            memberRef.setId(loanDto.getMemberId());
+        }
+
+        BookEntity bookRef = null;
+        if (loanDto.getBookId() != null) {
+            bookRef = new BookEntity();
+            bookRef.setId(loanDto.getBookId());
+        }
 
         return LoanEntity.builder()
                 .id(loanDto.getId())
                 .memberEntity(memberRef)
-                .bookEntity(bookMapper.mapFrom(loanDto.getBookDto()))
+                .bookEntity(bookRef)
                 .borrowedAt(loanDto.getBorrowedAt())
                 .dueDate(loanDto.getDueDate())
                 .returnedAt(loanDto.getReturnedAt())

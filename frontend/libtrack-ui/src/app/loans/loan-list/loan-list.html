@@ -1,0 +1,23 @@
+<h1>List of Loans</h1>
+<ul>
+  @for (loan of loans(); track loan.id) {
+    <li>
+      ID:{{ loan.id }}, Member Id:{{loan.memberId}} -
+
+      Book:
+      @if (loan.bookDto) {
+        {{ loan.bookDto.title }} by {{ loan.bookDto.author }} ...
+      } @else {
+        (Book info unavailable for this loan)
+      }
+
+      Borrowed At:{{loan.borrowedAt}} <br>
+
+      @if (loan.returnedAt) {
+        Returned At:{{loan.returnedAt}} <br>
+      }
+      Status: {{loan.status}}
+    </li>
+
+  }
+</ul>

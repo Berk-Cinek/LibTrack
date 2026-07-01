@@ -1,0 +1,24 @@
+<h1>Create a Loan</h1>
+
+<form [formGroup]="loanForm">
+  <input type="number" formControlName="memberId" placeholder="Member ID"/>
+  <input type="number" formControlName="bookId" placeholder="Book ID"/>
+
+  <button (click)="createOneLoan()" [disabled]="loanForm.invalid">Submit</button>
+</form>
+
+@if (errorMessage()) {
+  <p class="error">{{ errorMessage() }}</p>
+}
+
+@if (result()) {
+  <li>
+    Loan ID: {{ result()!.id }}, Member: {{ result()!.memberId }} <br>
+    @if (result()!.bookDto) {
+    Book: {{ result()!.bookDto.title }} by {{ result()!.bookDto.author }} <br>
+    }
+    Borrowed At: {{ result()!.borrowedAt }} <br>
+    Due Date: {{ result()!.dueDate }} <br>
+    Status: {{ result()!.status }}
+  </li>
+}

@@ -21,7 +21,10 @@ public class LoanDto {
     @Schema(description = "Id number that will be compared against members that this loan belongs to", example = "2")
     private Long memberId;
 
-    @Schema(description = "The book that is taken out on loan")
+    @Schema(description = "ID of the book being borrowed (for creating a loan)", example = "5")
+    private Long bookId;
+
+    @Schema(description = "The book on this loan (for display)", accessMode = Schema.AccessMode.READ_ONLY)
     private BookDto bookDto;
 
     @Schema(description = "When the loan record was created (set by the server)",

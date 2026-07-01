@@ -6,9 +6,14 @@ export interface Loan {
 
   id: number;
   memberId: number;
-  Book: Book;
+  bookDto: Book;
   borrowedAt: string;
   dueDate: string;
-  returnedAt: string;
+  returnedAt: string | null;
   status: LoanStatus;
+}
+
+export interface CreateLoanRequest {
+  memberId: number;
+  bookId: number;
 }
