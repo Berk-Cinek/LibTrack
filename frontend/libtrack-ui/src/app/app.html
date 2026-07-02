@@ -1,5 +1,7 @@
 <nav>
-  <details>
+  <details #booksMenu
+           (mouseleave)="scheduleClose(booksMenu)"
+           (mouseenter)="cancelClose(booksMenu)">
     <summary>Books</summary>
     <ul>
       <li><a routerLink="/bookList">Book List</a></li>
@@ -11,7 +13,9 @@
     </ul>
   </details>
 
-  <details>
+  <details #membersMenu
+           (mouseleave)="scheduleClose(membersMenu)"
+           (mouseenter)="cancelClose(membersMenu)">
     <summary>Members</summary>
     <ul>
       <li><a routerLink="/memberList"> Member List </a></li>
@@ -23,7 +27,9 @@
     </ul>
   </details>
 
-  <details>
+  <details #loansMenu
+           (mouseleave)="scheduleClose(loansMenu)"
+           (mouseenter)="cancelClose(loansMenu)">
     <summary>Loans</summary>
     <ul>
       <li><a routerLink="/loanList"> Loan List </a></li>
@@ -34,11 +40,13 @@
     </ul>
   </details>
 
-  <details>
+  <details #finesMenu
+           (mouseleave)="scheduleClose(finesMenu)"
+           (mouseenter)="cancelClose(finesMenu)">
     <summary>Fines</summary>
     <ul>
       <li><a routerLink="/fineList"> Fine List </a></li>
-      <li><a routerLink="/fineId"> Find Fine </a></li>
+      <li><a routerLink="/fineById"> Find Fine </a></li>
       <li><a routerLink="/finePartialUpdate"> Fine Partial Update</a></li>
       <li><a routerLink="/fineDelete"> Fine Delete</a></li>
     </ul>
@@ -46,4 +54,3 @@
 
 </nav>
 <router-outlet/>
-

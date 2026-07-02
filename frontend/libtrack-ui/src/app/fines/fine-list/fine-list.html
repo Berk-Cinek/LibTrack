@@ -1,18 +1,22 @@
 <h1>Fines</h1>
 
 <ul>
-  @for (fine of fines(); track fine.id) {
-    <li>
-      ID: {{ fine.id }} <br>
-      Book: {{ fine.loanDto.bookDto.title }} <br>
-      Member: {{ fine.loanDto.memberId }} <br>
-      Days Overdue: {{ fine.daysOverdue }} <br>
-      Amount: {{ fine.amount }} <br>
-      Paid: {{ fine.isPaid }}
+  @if (fines().length === 0) {
+    <p>No fines found.</p>
+  } @else {
+    @for (fine of fines(); track fine.id) {
+      <li>
+        ID: {{ fine.id }} <br>
+        Book: {{ fine.loanDto.bookDto.title }} <br>
+        Member: {{ fine.loanDto.memberId }} <br>
+        Days Overdue: {{ fine.daysOverdue }} <br>
+        Amount: {{ fine.amount }} <br>
+        Paid: {{ fine.isPaid }}
 
-      @if (fine.isPaid && fine.paidAt) {
-        <br> Paid At: {{ fine.paidAt }}
-      }
-    </li>
+        @if (fine.isPaid && fine.paidAt) {
+          <br> Paid At: {{ fine.paidAt }}
+        }
+      </li>
+    }
   }
 </ul>
