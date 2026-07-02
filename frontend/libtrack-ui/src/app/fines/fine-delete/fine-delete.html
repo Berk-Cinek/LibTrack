@@ -1,0 +1,6 @@
+<h1>Delete a Fine</h1>
+
+<input #idBox type="number" placeholder="Enter a Fine ID"
+       (input)="currentId.set(idBox.value)"/>
+
+<button (click)="deleteFine(idBox.value)" [disabled]="!currentId()">Delete</button>

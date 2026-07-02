@@ -1,0 +1,22 @@
+<h1>Partially Update a Fine</h1>
+
+<input #idBox type="number" placeholder="Enter a Fine ID"
+       (input)="currentId.set(idBox.value)"/>
+
+<form [formGroup]="fineForm">
+  <input type="number" formControlName="amount" placeholder="Amount"/>
+  <label>
+    <input type="checkbox" formControlName="isPaid"/> Paid
+  </label>
+
+  <button (click)="partialUpdateFine(idBox.value)" [disabled]="!currentId()">Submit</button>
+</form>
+
+@if (result()) {
+  <li>
+    ID: {{ result()!.id }} <br>
+    Book: {{ result()!.loanDto.bookDto.title }} <br>
+    Amount: {{ result()!.amount }} <br>
+    Paid: {{ result()!.isPaid }}
+  </li>
+}

@@ -9,7 +9,7 @@ import { Loan } from '../loan';
   templateUrl: './loan-list.html',
   styleUrl: './loan-list.css',
 })
-export class LoanList {
+export class LoanList implements OnInit{
   private loanApi = inject(LoanApi);
   loans = signal< Loan[] >([]);
 

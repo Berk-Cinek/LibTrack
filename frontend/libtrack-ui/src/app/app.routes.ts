@@ -16,6 +16,10 @@ import {LoanId} from './loans/loan-id/loan-id';
 import {LoanCreate} from './loans/loan-create/loan-create';
 import {LoanPartialUpdate} from './loans/loan-partial-update/loan-partial-update';
 import {LoanDelete} from './loans/loan-delete/loan-delete';
+import {FineId} from './fines/fine-id/fine-id';
+import {FinePartialUpdate} from './fines/fine-partial-update/fine-partial-update';
+import {FineDelete} from './fines/fine-delete/fine-delete';
+import {FineList} from './fines/fine-list/fine-list';
 
 export const routes: Routes = [
   { path: '',
@@ -105,7 +109,25 @@ export const routes: Routes = [
     path: "loanDelete",
     component: LoanDelete,
     title: "Delete loan via ID"
+  },
+  {
+    path: "fineList",
+    component: FineList,
+    title: "List all fines"
+  },
+  {
+    path: "fineById",
+    component: FineId,
+    title: "Find a fine by Id"
+  },
+  {
+    path: "finePartialUpdate",
+    component: FinePartialUpdate,
+    title: "Partial Update For Fines"
+  },
+  {
+    path: "fineDelete",
+    component: FineDelete,
+    title: "Delete Fine by Id"
   }
-
-
 ];

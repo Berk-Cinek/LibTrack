@@ -1,0 +1,21 @@
+<h1>Look up a Fine by ID</h1>
+
+<input #idBox type="number" placeholder="Enter an ID"
+       (input)="currentId.set(idBox.value)"/>
+
+<button (click)="getFineById(idBox.value)" [disabled]="!currentId()">Find</button>
+
+@if (fine()) {
+  <li>
+    ID: {{ fine()!.id }} <br>
+    Book: {{ fine()!.loanDto.bookDto.title }} <br>
+    Member: {{ fine()!.loanDto.memberId }} <br>
+    Days Overdue: {{ fine()!.daysOverdue }} <br>
+    Amount: {{ fine()!.amount }} <br>
+    Paid: {{ fine()!.isPaid }}
+
+    @if (fine()!.isPaid && fine()!.paidAt) {
+      <br> Paid At: {{ fine()!.paidAt }}
+    }
+  </li>
+}

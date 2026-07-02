@@ -8,7 +8,7 @@ import { Member } from '../member';
   templateUrl: './member-list.html',
   styleUrl: './member-list.css',
 })
-export class MemberList {
+export class MemberList implements OnInit{
   private memberApi = inject(MemberApi);
   members = signal< Member[] >([]);
 
