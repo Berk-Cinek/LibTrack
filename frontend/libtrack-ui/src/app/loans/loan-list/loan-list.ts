@@ -1,7 +1,6 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { LoanApi } from '../loan-api';
 import { Loan } from '../loan';
-
 
 @Component({
   selector: 'app-loan-list',
@@ -9,13 +8,54 @@ import { Loan } from '../loan';
   templateUrl: './loan-list.html',
   styleUrl: './loan-list.css',
 })
-export class LoanList implements OnInit{
+export class LoanList {
   private loanApi = inject(LoanApi);
-  loans = signal< Loan[] >([]);
 
-  ngOnInit() {
-    this.loanApi.getLoans().subscribe(data => {
-      this.loans.set(data.content);
-    })
+  loans = signal<Loan[]>([]);
+  currentPage = signal(0);
+  totalPages = signal(1);
+  pageSize = signal(20);
+  searchTerm = signal('');
+  loading = signal(false);
+
+  readonly pageSizeOptions = [10, 20, 50];
+
+  constructor() {
+    this.fetchPage(0);
+  }
+
+  fetchPage(page: number) {
+    this.loading.set(true);
+    this.loanApi.getLoans(page, this.pageSize(), this.searchTerm()).subscribe({
+      next: data => {
+        this.loans.set(data.content);
+        this.totalPages.set(data.totalPages);
+        this.currentPage.set(data.number);
+        this.loading.set(false);
+      },
+      error: () => this.loading.set(false),
+    });
+  }
+
+  nextPage() {
+    if (this.currentPage() + 1 < this.totalPages()) {
+      this.fetchPage(this.currentPage() + 1);
+    }
+  }
+
+  prevPage() {
+    if (this.currentPage() > 0) {
+      this.fetchPage(this.currentPage() - 1);
+    }
+  }
+
+  onPageSizeChange(size: string) {
+    this.pageSize.set(Number(size));
+    this.fetchPage(0);
+  }
+
+  onSearchInput(term: string) {
+    this.searchTerm.set(term);
+    this.fetchPage(0); // reset to page 0 — search result set is different from unfiltered
   }
 }

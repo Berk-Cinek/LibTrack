@@ -1,0 +1,120 @@
+.loan-list {
+  --paper: #faf6ee;
+  --ink: #242019;
+  --spine: #7a4b30;
+  --sage: #5b6d55;
+}
+
+.list-controls {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
+.page-size-select {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--sage);
+}
+
+.page-size-select select {
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #d8cfc0;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  background: white;
+  color: var(--ink);
+}
+
+.status-line {
+  color: var(--sage);
+  font-style: italic;
+}
+
+.loan-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.loan-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: white;
+  border-radius: 4px;
+  border-left: 5px solid var(--spine);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  padding: 1rem 1.25rem;
+}
+
+.loan-book {
+  font-family: Georgia, "Times New Roman", ui-serif, serif;
+  font-weight: 600;
+  color: var(--ink);
+  flex: 1;
+}
+
+.loan-member {
+  font-size: 0.9rem;
+  color: var(--sage);
+  margin: 0 1.5rem;
+}
+
+.loan-status {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+}
+
+.status-active {
+  background: #eaf0e6;
+  color: var(--sage);
+}
+
+.status-overdue {
+  background: #fbe9e6;
+  color: #a14b3f;
+}
+
+.status-returned {
+  background: #ece5d8;
+  color: #9a9284;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.pagination button {
+  background: var(--spine);
+  color: var(--paper);
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1.25rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  background: #d8cfc0;
+  color: var(--sage);
+  cursor: not-allowed;
+}
+
+.page-indicator {
+  font-size: 0.9rem;
+  color: var(--ink);
+}

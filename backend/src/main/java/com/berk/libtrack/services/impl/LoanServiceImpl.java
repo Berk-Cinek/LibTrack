@@ -6,6 +6,7 @@ import com.berk.libtrack.exceptions.ResourceNotFoundException;
 import com.berk.libtrack.repositories.MemberRepository;
 import com.berk.libtrack.repositories.BookRepository;
 import com.berk.libtrack.repositories.LoanRepository;
+import com.berk.libtrack.repositories.specs.LoanSpecifications;
 import com.berk.libtrack.services.LoanService;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -123,6 +124,14 @@ public class LoanServiceImpl implements LoanService {
     @Override
     public List<LoanEntity> findAll() {
         return loanRepository.findAll();
+    }
+
+    @Override
+    public Page<LoanEntity> findAll(Pageable pageable, String search) {
+        if (search == null || search.isBlank()) {
+            return loanRepository.findAll(pageable);
+        }
+        return loanRepository.findAll(LoanSpecifications.search(search), pageable);
     }
 
     @Override

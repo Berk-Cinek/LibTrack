@@ -1,19 +1,27 @@
-import { Service, inject, signal, Injectable } from '@angular/core';
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Loan, CreateLoanRequest } from './/loan';
+import { Loan, CreateLoanRequest } from './loan';
 
-@Injectable({ providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class LoanApi {
   private http = inject(HttpClient);
   private baseUrl = 'http://localhost:8080/loans';
 
-  getLoans() : Observable<LoanPage>{
-    return  this.http.get<LoanPage>(this.baseUrl);
+  getLoans(page = 0, size = 20, search = ''): Observable<LoanPage> {
+    let params = new HttpParams()
+      .set('page', page)
+      .set('size', size);
+
+    if (search) {
+      params = params.set('search', search);
+    }
+
+    return this.http.get<LoanPage>(this.baseUrl, { params });
   }
 
-  getLoanById(id: number) : Observable<Loan>{
-    return this.http.get<Loan>(`${this.baseUrl}/${id}`)
+  getLoanById(id: number): Observable<Loan> {
+    return this.http.get<Loan>(`${this.baseUrl}/${id}`);
   }
 
   createLoan(created: CreateLoanRequest): Observable<Loan> {
@@ -29,7 +37,12 @@ export class LoanApi {
   }
 }
 
-interface LoanPage{
+export interface LoanPage {
   content: Loan[];
+  totalPages: number;
+  totalElements: number;
+  number: number;
+  size: number;
+  first: boolean;
+  last: boolean;
 }
-

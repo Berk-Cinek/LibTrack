@@ -1,24 +1,48 @@
-<h1>Create a Loan</h1>
+<section class="loan-create">
+  <header class="loan-create-header">
+    <h1>Create a Loan</h1>
+    <p class="subtitle">Assign a book to a member.</p>
+  </header>
 
-<form [formGroup]="loanForm">
-  <input type="number" formControlName="memberId" placeholder="Member ID"/>
-  <input type="number" formControlName="bookId" placeholder="Book ID"/>
+  <form [formGroup]="loanForm" (ngSubmit)="createOneLoan()" class="loan-form">
+    <label class="form-field">
+      <span class="form-label">Member ID</span>
+      <input
+        type="text"
+        formControlName="memberId"
+        class="form-input"
+        placeholder="Enter member ID…"
+      />
+      @if (loanForm.controls.memberId.invalid && loanForm.controls.memberId.touched) {
+        <span class="field-error">Member ID is required.</span>
+      }
+    </label>
 
-  <button (click)="createOneLoan()" [disabled]="loanForm.invalid">Submit</button>
-</form>
+    <label class="form-field">
+      <span class="form-label">Book ID</span>
+      <input
+        type="text"
+        formControlName="bookId"
+        class="form-input"
+        placeholder="Enter book ID…"
+      />
+      @if (loanForm.controls.bookId.invalid && loanForm.controls.bookId.touched) {
+        <span class="field-error">Book ID is required.</span>
+      }
+    </label>
 
-@if (errorMessage()) {
-  <p class="error">{{ errorMessage() }}</p>
-}
+    <button type="submit" class="submit-btn" [disabled]="loanForm.invalid">
+      Create Loan
+    </button>
+  </form>
 
-@if (result()) {
-  <li>
-    Loan ID: {{ result()!.id }}, Member: {{ result()!.memberId }} <br>
-    @if (result()!.bookDto) {
-    Book: {{ result()!.bookDto.title }} by {{ result()!.bookDto.author }} <br>
-    }
-    Borrowed At: {{ result()!.borrowedAt }} <br>
-    Due Date: {{ result()!.dueDate }} <br>
-    Status: {{ result()!.status }}
-  </li>
-}
+  @if (errorMessage()) {
+    <p class="status-message status-error">{{ errorMessage() }}</p>
+  }
+
+  @if (result(); as loan) {
+    <p class="status-message status-success">
+      Loan created — book {{ loan.bookDto.title }} assigned to member {{ loan.memberId }}.
+    </p>
+  }
+</section>

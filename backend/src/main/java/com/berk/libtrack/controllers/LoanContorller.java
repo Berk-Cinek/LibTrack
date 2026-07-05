@@ -37,10 +37,10 @@ public class LoanContorller {
         return new ResponseEntity<>(loanMapper.mapTo(savedEntity), HttpStatus.CREATED);
     }
 
-    @Operation(summary = "Get all Loan", description = "Get all Loan with pagination")
+    @Operation(summary = "Get all Loan", description = "Get all Loan with pagination + search string")
     @GetMapping(path = "/loans")
-    public Page<LoanDto> listLoans(Pageable pageable){
-        Page<LoanEntity> loans = loanService.findAll(pageable);
+    public Page<LoanDto> listLoans(Pageable pageable, @RequestParam(required = false) String search){
+        Page<LoanEntity> loans = loanService.findAll(pageable, search);
         return loans.map(loanMapper::mapTo);
     }
 

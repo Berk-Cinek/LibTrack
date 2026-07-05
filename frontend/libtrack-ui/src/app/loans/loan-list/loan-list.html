@@ -1,23 +1,44 @@
-<h1>List of Loans</h1>
-<ul>
-  @for (loan of loans(); track loan.id) {
-    <li>
-      ID:{{ loan.id }}, Member Id:{{loan.memberId}} -
+<section class="loan-list">
+  <div class="list-controls">
+    <input
+      #searchBox
+      type="text"
+      class="search-input"
+      placeholder="Search loans…"
+      (input)="onSearchInput(searchBox.value)"
+    />
 
-      Book:
-      @if (loan.bookDto) {
-        {{ loan.bookDto.title }} by {{ loan.bookDto.author }} ...
-      } @else {
-        (Book info unavailable for this loan)
+    <label class="page-size-select">
+      <span>Per page</span>
+      <select (change)="onPageSizeChange($any($event.target).value)">
+        @for (size of pageSizeOptions; track size) {
+          <option [value]="size" [selected]="size === pageSize()">{{ size }}</option>
+        }
+      </select>
+    </label>
+  </div>
+
+  @if (loading()) {
+    <p class="status-line">Loading loans…</p>
+  } @else if (loans().length === 0) {
+    <p class="status-line">No loans match your search.</p>
+  } @else {
+    <ul class="loan-items">
+      @for (loan of loans(); track loan.id) {
+        <li class="loan-item">
+          <span class="loan-book">{{ loan.bookDto.title }}</span>
+          <span class="loan-member">Member #{{ loan.memberId }}</span>
+          <span class="loan-status" [class]="'status-' + loan.status.toLowerCase()">
+            {{ loan.status }}
+          </span>
+        </li>
       }
+    </ul>
 
-      Borrowed At:{{loan.borrowedAt}} <br>
-
-      @if (loan.returnedAt) {
-        Returned At:{{loan.returnedAt}} <br>
-      }
-      Status: {{loan.status}}
-    </li>
-
+    <div class="pagination">
+      <button (click)="prevPage()" [disabled]="currentPage() === 0">Previous</button>
+      <span class="page-indicator">Page {{ currentPage() + 1 }} of {{ totalPages() }}</span>
+      <button (click)="nextPage()" [disabled]="currentPage() + 1 >= totalPages()">Next</button>
+    </div>
   }
-</ul>
+</section>

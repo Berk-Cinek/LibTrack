@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class BookMapper implements Mapper<BookEntity, BookDto>{
 
-    //can use modelmapper idk if this is bad code
 
     @Override
     public BookDto mapTo(BookEntity bookEntity) {

@@ -1,6 +1,9 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs';
 import { formToLoan } from '../loan-mapper';
 import { LoanApi } from '../loan-api';
 import { Loan } from '../loan';
@@ -14,12 +17,18 @@ import { Loan } from '../loan';
 export class LoanCreate {
   private loanApi = inject(LoanApi);
   private formBuilder = inject(FormBuilder);
+  private route = inject(ActivatedRoute);
+
   result = signal<Loan | null>(null);
   errorMessage = signal('');
 
+  bookId = toSignal(
+    this.route.queryParamMap.pipe(map(params => params.get('bookId')))
+  );
+
   loanForm = this.formBuilder.group({
     memberId: ['', Validators.required],
-    bookId: ['', Validators.required],
+    bookId: [this.bookId() ?? '', Validators.required],
   });
 
   createOneLoan() {

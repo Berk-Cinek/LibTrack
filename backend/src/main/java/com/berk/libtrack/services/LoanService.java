@@ -29,6 +29,8 @@ public interface LoanService {
 
     List<LoanEntity> findAll();
 
+    Page<LoanEntity> findAll(Pageable pageable, String search);
+
     Page<LoanEntity> findAll(Pageable pageable);
 
     Optional<LoanEntity> findOne(Long id);

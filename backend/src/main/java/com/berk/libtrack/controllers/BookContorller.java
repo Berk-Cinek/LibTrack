@@ -79,10 +79,11 @@ public class BookContorller {
         BookEntity savedBookEntity = bookService.save(bookEntity);
         return new ResponseEntity<>(bookMapper.mapTo(savedBookEntity), HttpStatus.OK);
     }
+
     @Operation(summary = "Partial update Book", description = "Partially update one Book based on id match, " +
             "any given value will change those which are not given stay the same")
     @PatchMapping(path = "books/{id}")
-    public ResponseEntity<BookDto> partialUpdate(@PathVariable("id") Long id, @RequestBody BookDto bookDto){
+    public ResponseEntity<BookDto> partialUpdate(@PathVariable Long id, @RequestBody BookDto bookDto){
 
         BookEntity bookEntity = bookMapper.mapFrom(bookDto);
         BookEntity updatedBook = bookService.partialUpdate(id, bookEntity);
