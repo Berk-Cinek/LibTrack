@@ -20,11 +20,18 @@ import {FineId} from './fines/fine-id/fine-id';
 import {FinePartialUpdate} from './fines/fine-partial-update/fine-partial-update';
 import {FineDelete} from './fines/fine-delete/fine-delete';
 import {FineList} from './fines/fine-list/fine-list';
+import {BookCatalog} from './books/book-catalog/book-catalog';
 
 export const routes: Routes = [
   { path: '',
-    redirectTo: 'bookList',
-    pathMatch: 'full' },
+    redirectTo: 'bookCatalog',
+    pathMatch: 'full'
+  },
+  {
+    path: "bookCatalog",
+    component: BookCatalog,
+    title: "Book Catalog"
+  },
   {
     path: "bookList",
     component: BookList,

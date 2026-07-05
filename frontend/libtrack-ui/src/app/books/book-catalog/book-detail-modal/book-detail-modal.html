@@ -1,0 +1,14 @@
+<div class="modal-backdrop" (click)="closed.emit()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <h2>{{ book().title }}</h2>
+    <p class="book-author">{{ book().author }}</p>
+    <p class="book-genre">{{ book().genre }}</p>
+    <p class="book-isbn">ISBN {{ book().isbn }}</p>
+
+    <button (click)="closed.emit()">Close</button>
+
+    <a class="modal-loan-btn" [routerLink]="['/loanCreate']" [queryParams]="{ bookId: book().id }">
+      Loan this book
+    </a>
+  </div>
+</div>

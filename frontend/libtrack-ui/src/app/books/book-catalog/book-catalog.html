@@ -1,0 +1,23 @@
+<section class="catalog">
+  <header class="catalog-header">
+    <h1>Book Catalog</h1>
+    <p class="subtitle">Search the shelves by title, author, or genre.</p>
+  </header>
+
+  <app-search-list
+    [items]="books()"
+    [loading]="loading()"
+    [filterFn]="bookFilter"
+    searchPlaceholder="Search books…"
+    emptyMessage="No books match your search."
+    (select)="selectedBook.set($event)"
+  >
+    <ng-template let-book>
+      <app-book-card [book]="book" (select)="selectedBook.set(book)" />
+    </ng-template>
+  </app-search-list>
+</section>
+
+@if (selectedBook(); as book) {
+  <app-book-detail-modal [book]="book" (closed)="selectedBook.set(null)" />
+}

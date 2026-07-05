@@ -1,0 +1,22 @@
+<input
+  #searchBox
+  type="text"
+  class="search-input"
+  [placeholder]="searchPlaceholder()"
+  (input)="onSearchInput(searchBox.value)"
+/>
+
+@if (loading()) {
+  <p class="status-line">Loading…</p>
+} @else if (filteredItems().length === 0) {
+  <p class="status-line">{{ emptyMessage() }}</p>
+} @else {
+  <div class="result-grid">
+    @for (item of filteredItems(); track $index) {
+      <ng-container
+        [ngTemplateOutlet]="itemTemplate()"
+        [ngTemplateOutletContext]="{ $implicit: item }"
+      />
+    }
+  </div>
+}

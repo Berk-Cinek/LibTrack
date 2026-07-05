@@ -1,0 +1,19 @@
+<article class="book-card" (click)="onSelect()">
+  <h2 class="book-title">{{ book().title }}</h2>
+  <p class="book-author">{{ book().author }}</p>
+  <p class="book-genre">{{ book().genre }}</p>
+
+  <div class="availability">
+    <div class="availability-bar">
+      <div
+        class="availability-fill"
+        [style.width.%]="(book().availableCopies / book().totalCopies) * 100"
+      ></div>
+    </div>
+    <span class="availability-count">
+      {{ book().availableCopies }} / {{ book().totalCopies }} available
+    </span>
+  </div>
+
+  <p class="book-isbn">ISBN {{ book().isbn }}</p>
+</article>
