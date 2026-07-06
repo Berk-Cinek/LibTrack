@@ -1,0 +1,38 @@
+databaseChangeLog:
+    - changeSet:
+        id: 002-create-users-table
+        author: berk
+        changes:
+          - createTable:
+              tableName: users
+              columns:
+                - column:
+                    name: id
+                    type: bigint
+                    autoIncrement: true
+                    constraints:
+                      primaryKey: true
+                - column:
+                    name: member_id
+                    type: bigint
+                    constraints:
+                      nullable: false
+                      unique: true
+                      foreignKeyName: fk_user_member
+                      references: members(id)
+                - column:
+                    name: username
+                    type: varchar(100)
+                    constraints:
+                      nullable: false
+                      unique: true
+                - column:
+                    name: password
+                    type: varchar(255)
+                    constraints:
+                      nullable: false
+                - column:
+                    name: role
+                    type: varchar(50)
+                    constraints:
+                      nullable: false

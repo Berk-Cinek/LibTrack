@@ -49,4 +49,11 @@ public class GlobalExceptionHandler {
                 400, ex.getMessage(), req.getRequestURI());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
     }
+
+    @ExceptionHandler(AuthorizationFailedException.class)
+    public ResponseEntity<ErrorResponse> handleAuth(
+            AuthorizationFailedException ex, HttpServletRequest req){
+        ErrorResponse body = new ErrorResponse(Instant.now(), 401, ex.getMessage(), req.getRequestURI());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(body);
+    }
 }

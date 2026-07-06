@@ -35,4 +35,7 @@ public class MemberEntity {
 
     @OneToMany(mappedBy = "memberEntity", cascade = CascadeType.ALL)
     private List<LoanEntity> loanEntities =new ArrayList<>();
+
+    @OneToOne(mappedBy = "memberEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    private UserEntity userEntity;
 }
