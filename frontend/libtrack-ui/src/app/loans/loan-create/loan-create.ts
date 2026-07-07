@@ -4,6 +4,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
+import { AuthService } from '../../auth/auth-service'
 import { formToLoan } from '../loan-mapper';
 import { LoanApi } from '../loan-api';
 import { Loan } from '../loan';
@@ -18,6 +19,7 @@ export class LoanCreate {
   private loanApi = inject(LoanApi);
   private formBuilder = inject(FormBuilder);
   private route = inject(ActivatedRoute);
+  authService = inject(AuthService);
 
   result = signal<Loan | null>(null);
   errorMessage = signal('');

@@ -11,4 +11,6 @@ public interface AuthService {
     LoginResponse login(LoginRequest request);
 
     void promoteToAdmin(Long userId);
+
+    Long getMemberIdForUsername(String username);
 }

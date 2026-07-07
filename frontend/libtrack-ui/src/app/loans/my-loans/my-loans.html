@@ -1,0 +1,38 @@
+<section class="my-loans">
+  <h1>My Loans</h1>
+
+  @if (authService.isLoggedIn()) {
+    @if (loans().length === 0) {
+      <p class="status-line">You have no loans right now.</p>
+    } @else {
+      <ul class="loan-items">
+        @for (loan of loans(); track loan.id) {
+          <li class="loan-item">
+            <div class="loan-header">
+              <div>
+                <div class="loan-book">{{ loan.bookDto.title }}</div>
+                <div class="loan-author">{{ loan.bookDto.author }}</div>
+              </div>
+              <span class="loan-status"
+                    [class.status-active]="loan.status === 'ACTIVE'"
+                    [class.status-overdue]="loan.status === 'OVERDUE'"
+                    [class.status-returned]="loan.status === 'RETURNED'">
+                {{ loan.status }}
+              </span>
+            </div>
+
+            <div class="loan-dates">
+              <span>Borrowed: <strong>{{ loan.borrowedAt }}</strong></span>
+              <span>Due: <strong>{{ loan.dueDate }}</strong></span>
+              @if (loan.returnedAt) {
+                <span>Returned: <strong>{{ loan.returnedAt }}</strong></span>
+              }
+            </div>
+          </li>
+        }
+      </ul>
+    }
+  } @else {
+    <p class="auth-required">Please log in to see your loans.</p>
+  }
+</section>

@@ -17,7 +17,7 @@ public interface MemberService {
 
     void delete(Long id);
 
-    List<MemberEntity> findAll();
+    Page<MemberEntity> findAll(String search, Pageable pageable);
 
     Page<MemberEntity> findAll(Pageable pageable);
 

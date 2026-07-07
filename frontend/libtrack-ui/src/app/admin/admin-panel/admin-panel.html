@@ -1,0 +1,44 @@
+<section class="admin-panel">
+  <h1>Admin Panel</h1>
+
+  @if(authService.isAdmin()){
+    <div class="tab-bar">
+      <button [class.active]="activeTab() === 'books'"   (click)="activeTab.set('books')">Books</button>
+      <button [class.active]="activeTab() === 'members'" (click)="activeTab.set('members')">Members</button>
+      <button [class.active]="activeTab() === 'loans'"   (click)="activeTab.set('loans')">Loans</button>
+      <button [class.active]="activeTab() === 'fines'"   (click)="activeTab.set('fines')">Fines</button>
+    </div>
+
+    @switch (activeTab()) {
+      @case ('books') {
+        <app-book-list/>
+        <app-book-id/>
+        <app-book-create/>
+        <app-book-partial-update/>
+        <app-book-delete/>
+      }
+      @case ('members') {
+        <app-member-list/>
+        <app-member-id/>
+        <app-member-create/>
+        <app-member-partial-update/>
+        <app-member-delete/>
+      }
+      @case ('loans') {
+        <app-loan-list/>
+        <app-loan-id/>
+        <app-loan-create/>
+        <app-loan-partial-update/>
+        <app-loan-delete/>
+      }
+      @case ('fines') {
+        <app-fine-list/>
+        <app-fine-id/>
+        <app-fine-partial-update/>
+        <app-fine-delete/>
+      }
+    }
+  } @else {
+    <p class="status-line">Admin access required.</p>
+  }
+</section>

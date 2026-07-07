@@ -35,6 +35,10 @@ export class LoanApi {
   deleteLoan(id: number): Observable<HttpResponse<void>> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`, { observe: 'response' });
   }
+
+  getMyLoans(): Observable<LoanPage> {
+    return this.http.get<LoanPage>(`${this.baseUrl}/mine`);
+  }
 }
 
 export interface LoanPage {

@@ -1,5 +1,5 @@
 import { Service, Injectable, inject} from '@angular/core';
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpResponse, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Member } from './member';
 
@@ -8,8 +8,12 @@ export class MemberApi {
   private http = inject(HttpClient);
   private baseUrl = 'http://localhost:8080/members';
 
-  getMembers(): Observable<MemberPage>{
-    return this.http.get<MemberPage>(this.baseUrl);
+  getMembers(page = 0, size = 20, search = ''): Observable<MemberPage> {
+    let params = new HttpParams().set('page', page).set('size', size);
+    if (search) {
+      params = params.set('search', search);
+    }
+    return this.http.get<MemberPage>(this.baseUrl, { params });
   }
 
   getMemberById(id: number) : Observable<Member>{
@@ -35,4 +39,10 @@ export class MemberApi {
 
 interface MemberPage{
   content: Member[];
+  totalPages: number;
+  totalElements: number;
+  number: number;
+  size: number;
+  first: boolean;
+  last: boolean;
 }

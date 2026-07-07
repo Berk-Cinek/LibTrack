@@ -4,6 +4,7 @@ import com.berk.libtrack.domain.dto.LoanDto;
 import com.berk.libtrack.domain.entities.LoanEntity;
 import com.berk.libtrack.exceptions.ResourceNotFoundException;
 import com.berk.libtrack.mappers.LoanMapper;
+import com.berk.libtrack.security.services.AuthService;
 import com.berk.libtrack.services.LoanService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -11,21 +12,25 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
-@CrossOrigin(origins = "http://localhost:4200")
 @Tag(name = "Loans", description = "Basic CRUD functionality for Fines + pagination for return-all")
 @RestController
 public class LoanContorller {
 
     private LoanService loanService;
     private LoanMapper loanMapper;
+    private AuthService authService;
 
-    public LoanContorller(LoanService loanService, LoanMapper loanMapper) {
+    public LoanContorller(LoanService loanService, LoanMapper loanMapper, AuthService authService) {
         this.loanService = loanService;
         this.loanMapper = loanMapper;
+        this.authService = authService;
     }
 
     @Operation(summary = "Create a Loans", description = "Adds a new book to the catalog." +
@@ -35,6 +40,18 @@ public class LoanContorller {
         LoanEntity loanEntity = loanMapper.mapFrom(loanDto);
         LoanEntity savedEntity = loanService.loanCreate(loanEntity);
         return new ResponseEntity<>(loanMapper.mapTo(savedEntity), HttpStatus.CREATED);
+    }
+
+    @Operation(summary = "Get all loan of member", description = "get all loans of a loged-in member")
+    @GetMapping("/loans/mine")
+    public ResponseEntity<Page<LoanDto>> getMyLoans(Pageable pageable) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) auth.getPrincipal();
+
+        Long memberId = authService.getMemberIdForUsername(userDetails.getUsername());
+
+        return ResponseEntity.ok(loanService.findByMemberId(memberId, pageable)
+                .map(loanMapper::mapTo));
     }
 
     @Operation(summary = "Get all Loan", description = "Get all Loan with pagination + search string")

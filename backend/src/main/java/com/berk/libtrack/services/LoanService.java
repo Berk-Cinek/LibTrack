@@ -34,4 +34,6 @@ public interface LoanService {
     Page<LoanEntity> findAll(Pageable pageable);
 
     Optional<LoanEntity> findOne(Long id);
+
+    Page<LoanEntity> findByMemberId(Long memberId, Pageable pageable);
 }

@@ -1,0 +1,100 @@
+.my-loans {
+  --paper: #faf6ee;
+  --ink: #242019;
+  --spine: #7a4b30;
+  --sage: #5b6d55;
+}
+
+.my-loans h1 {
+  font-family: Georgia, "Times New Roman", ui-serif, serif;
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 1.25rem;
+}
+
+.status-line {
+  color: var(--sage);
+  font-style: italic;
+}
+
+.auth-required {
+  color: var(--sage);
+  font-style: italic;
+  background: #ece5d8;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.loan-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.loan-item {
+  background: white;
+  border-radius: 4px;
+  border-left: 5px solid var(--spine);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  padding: 1rem 1.25rem;
+}
+
+.loan-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.loan-book {
+  font-family: Georgia, "Times New Roman", ui-serif, serif;
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--ink);
+}
+
+.loan-author {
+  font-size: 0.9rem;
+  color: var(--sage);
+}
+
+.loan-dates {
+  font-size: 0.85rem;
+  color: var(--sage);
+  display: flex;
+  gap: 1.5rem;
+}
+
+.loan-dates strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.loan-status {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+}
+
+.status-active {
+  background: #eaf0e6;
+  color: var(--sage);
+}
+
+.status-overdue {
+  background: #fbe9e6;
+  color: #a14b3f;
+}
+
+.status-returned {
+  background: #ece5d8;
+  color: #9a9284;
+}

@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
-@CrossOrigin(origins = "http://localhost:4200")
 @Tag(name = "Fines", description = "Basic CRUD functionality for Fines + pagination for return-all")
 @RestController
 public class FineController {

@@ -1,10 +1,31 @@
-<h1>List of Members</h1>
-<ul>
-  @for (member of members(); track member.id) {
-    <li> Member Number:{{member.memberNo}} - {{member.fullName}}, ID: {{member.id}}<br>
-      Email:{{ member.email }} <br>
-      Active: {{ member.isActive }} <br>
-      Created at: {{member.createdAt}}
-    </li>
-  }
-</ul>
+<div class="list-controls">
+  <input #searchBox type="text" placeholder="Search members…"
+         (input)="onSearchInput(searchBox.value)" />
+  <label class="page-size-select">
+    Per page
+    <select #sizeBox (change)="onSizeChange(sizeBox.value)">
+      <option value="10">10</option>
+      <option value="20" selected>20</option>
+      <option value="50">50</option>
+    </select>
+  </label>
+</div>
+
+@if (members().length === 0) {
+  <p class="status-line">No members found.</p>
+} @else {
+  <ul>
+    @for (member of members(); track member.id) {
+      <li>
+        <strong>{{ member.fullName }}</strong> — No: {{ member.memberNo }} <br>
+        Email: {{ member.email }}, Active: {{ member.isActive }}
+      </li>
+    }
+  </ul>
+
+  <div class="pagination">
+    <button (click)="prevPage()" [disabled]="first()">Previous</button>
+    <span class="page-indicator">Page {{ page() + 1 }} of {{ totalPages() }}</span>
+    <button (click)="nextPage()" [disabled]="last()">Next</button>
+  </div>
+}

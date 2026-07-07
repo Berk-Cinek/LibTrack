@@ -56,6 +56,7 @@ public class AuthServiceImpl implements AuthService {
 
         return LoginResponse.builder()
                 .token(token)
+                .memberId(user.getMemberEntity().getId())
                 .username(user.getUsername())
                 .role(user.getRole())
                 .build();
@@ -67,5 +68,12 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userId));
         user.setRole("ADMIN");
         userRepository.save(user);
+    }
+
+    @Override
+    public Long getMemberIdForUsername(String username) {
+        UserEntity user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        return user.getMemberEntity().getId();
     }
 }

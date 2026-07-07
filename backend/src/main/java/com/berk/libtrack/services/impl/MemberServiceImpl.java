@@ -56,8 +56,11 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public List<MemberEntity> findAll() {
-        return memberRepository.findAll();
+    public Page<MemberEntity> findAll(String search, Pageable pageable) {
+        if (search == null || search.isBlank()) {
+            return memberRepository.findAll(pageable);
+        }
+        return memberRepository.findByFullName(search, pageable);
     }
 
     @Override

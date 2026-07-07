@@ -1,0 +1,27 @@
+.tab-bar {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 1.5rem;
+}
+
+.tab-bar button {
+  background: none;
+  color: var(--sage);
+  border: none;
+  border-bottom: 3px solid transparent;
+  border-radius: 0;
+  padding: 0.6rem 1.25rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.tab-bar button:hover:not(.active) {
+  color: var(--ink);
+  background: none;
+}
+
+.tab-bar button.active {
+  color: var(--spine);
+  border-bottom-color: var(--spine);
+}

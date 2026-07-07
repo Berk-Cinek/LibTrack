@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
-@CrossOrigin(origins = "http://localhost:4200")
 @Tag(name = "Members", description = "Basic CRUD functionality for Members + pagination for return-all")
 @RestController
 public class MemberController {
@@ -36,10 +35,11 @@ public class MemberController {
         MemberEntity savedEntity = memberService.save(memberEntity);
         return new ResponseEntity<>(memberMapper.mapTo(savedEntity), HttpStatus.CREATED);
     }
+
     @Operation(summary = "Get all Members", description = "Get all Members with pagination")
     @GetMapping(path = "/members")
-    public Page<MemberDto> listMembers(Pageable pageable){
-        Page<MemberEntity> members = memberService.findAll(pageable);
+    public Page<MemberDto> listMembers(Pageable pageable, @RequestParam(required = false) String search){
+        Page<MemberEntity> members = memberService.findAll(pageable, search);
         return members.map(memberMapper::mapTo);
     }
     @Operation(summary = "Get one Member", description = "Get one Member based on id match")

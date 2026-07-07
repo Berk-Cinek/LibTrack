@@ -1,0 +1,33 @@
+<nav>
+  <details #booksMenu
+           (mouseleave)="scheduleClose(booksMenu)"
+           (mouseenter)="cancelClose(booksMenu)">
+    <summary>Books</summary>
+    <ul>
+      <li><a routerLink="/bookCatalog">Book Catalog</a></li>
+    </ul>
+  </details>
+
+  <details #loansMenu
+           (mouseleave)="scheduleClose(loansMenu)"
+           (mouseenter)="cancelClose(loansMenu)">
+    <summary>Loans</summary>
+    <ul>
+      <li><a routerLink="/myLoans"> My Loans </a></li>
+    </ul>
+  </details>
+
+  @if(authService.isAdmin()){
+  <details #adminMenu
+           (mouseleave)="scheduleClose(adminMenu)"
+           (mouseenter)="cancelClose(adminMenu)">
+    <summary>Admin Menu</summary>
+    <ul>
+      <li><a routerLink="/adminPanel"> Admin Panel </a></li>
+    </ul>
+  </details>
+  }
+
+  <app-login-widget />
+
+</nav>

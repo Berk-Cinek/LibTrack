@@ -1,0 +1,18 @@
+<div class="auth-widget">
+  @if (authService.isLoggedIn()) {
+    <span class="auth-user">
+      <strong>{{ authService.username() }}</strong>
+      <span class="auth-role">{{ authService.role() }}</span>
+    </span>
+    <button (click)="onLogoutClick()">Log out</button>
+  } @else {
+    <form class="auth-form" (ngSubmit)="onLogin()" [formGroup]="loginForm">
+      <input type="text" formControlName="username" placeholder="Username" />
+      <input type="password" formControlName="password" placeholder="Password" />
+      <button type="submit">Log in</button>
+    </form>
+    @if (loginError()) {
+      <span class="auth-error">{{ loginError() }}</span>
+    }
+  }
+</div>

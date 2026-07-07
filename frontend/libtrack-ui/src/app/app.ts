@@ -1,41 +1,19 @@
-import { Component, signal, HostListener, ElementRef, inject } from '@angular/core';
-import { RouterOutlet, RouterLink } from '@angular/router';
+import { Component, signal, inject, OnInit } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { AuthService } from './auth/auth-service';
+import { NavBar } from './nav/nav-bar/nav-bar';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink],
+  imports: [RouterOutlet, NavBar],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
-export class App {
+export class App implements OnInit {
   protected readonly title = signal('libtrack-ui');
-  private elementRef = inject(ElementRef);
+  private authService = inject(AuthService);   // private again — template no longer needs it
 
-  closeTimers = new Map<HTMLDetailsElement, ReturnType<typeof setTimeout>>();
-
-  scheduleClose(details: HTMLDetailsElement) {
-    const timer = setTimeout(() => { details.open = false; }, 1500);
-    this.closeTimers.set(details, timer);
-  }
-
-  cancelClose(details: HTMLDetailsElement) {
-    const timer = this.closeTimers.get(details);
-    if (timer) {
-      clearTimeout(timer);
-      this.closeTimers.delete(details);
-    }
-  }
-
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent) {
-    const clickedInsideNav = this.elementRef.nativeElement.contains(event.target);
-    if (!clickedInsideNav) return;
-
-    const allDetails = this.elementRef.nativeElement.querySelectorAll('nav details');
-    allDetails.forEach((details: HTMLDetailsElement) => {
-      if (!details.contains(event.target as Node)) {
-        details.open = false;
-      }
-    });
+  ngOnInit() {
+    this.authService.checkSession();
   }
 }

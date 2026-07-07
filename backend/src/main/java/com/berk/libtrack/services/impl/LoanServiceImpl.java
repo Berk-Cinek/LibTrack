@@ -145,6 +145,11 @@ public class LoanServiceImpl implements LoanService {
         return loanRepository.findById(id);
     }
 
+    @Override
+    public Page<LoanEntity> findByMemberId(Long memberId, Pageable pageable) {
+        return loanRepository.findByMemberEntity_Id(memberId, pageable);
+    }
+
     @Scheduled(cron = "0 0 0 1 * *")
     public void markOverdueAndFine(){
         var due = loanRepository.findByStatusAndDueDateBefore(LoanStatus.ACTIVE, LocalDateTime.now());
