@@ -57,8 +57,13 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<BookEntity> findAll() {
-         return bookRepository.findAll();
+    public Page<BookEntity> findAll(Pageable pageable, String search) {
+        if (search == null || search.isBlank()) {
+            return bookRepository.findAll(pageable);
+        }
+        return bookRepository
+                .findByTitleContainingIgnoreCaseOrAuthorContainingIgnoreCaseOrGenreContainingIgnoreCase(
+                        search, search, search, pageable);
     }
 
     @Override

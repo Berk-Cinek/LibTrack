@@ -43,6 +43,13 @@ public class FineController {
         return fines.map(fineMapper::mapTo);
     }
 
+    @Operation(summary = "Get all Fines for admin", description = "Get all Fines for admin with pagination")
+    @GetMapping(path = "/fines/admin")
+    public Page<FineDto> listFines(Pageable pageable,@RequestParam(required = false) String search){
+        return fineService.findAll(pageable, search)
+                .map(fineMapper::mapTo);
+    }
+
     @Operation(summary = "Get one Fine", description = "Get one Fine based on id match")
     @GetMapping(path = "/fines/{id}")
     public ResponseEntity<FineDto> getById(@PathVariable("id") Long id){

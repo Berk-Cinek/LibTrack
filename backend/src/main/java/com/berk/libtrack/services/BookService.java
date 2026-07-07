@@ -17,7 +17,7 @@ public interface BookService {
 
     void delete(Long id);
 
-    List<BookEntity> findAll();
+    Page<BookEntity> findAll(Pageable pageable, String search);
 
     Page<BookEntity> findAll(Pageable pageable);
 

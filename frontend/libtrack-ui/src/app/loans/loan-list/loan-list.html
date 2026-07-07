@@ -31,6 +31,11 @@
           <span class="loan-status" [class]="'status-' + loan.status.toLowerCase()">
             {{ loan.status }}
           </span>
+
+          <div class="row-actions">
+            <button (click)="editRequested.emit(loan)">Edit</button>
+            <button class="danger" (click)="deleteRequested.emit(loan)">Delete</button>
+          </div>
         </li>
       }
     </ul>

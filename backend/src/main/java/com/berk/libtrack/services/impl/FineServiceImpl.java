@@ -64,8 +64,11 @@ public class FineServiceImpl implements FineService {
     }
 
     @Override
-    public List<FineEntity> findAll() {
-        return fineRepository.findAll();
+    public Page<FineEntity> findAll(Pageable pageable, String search) {
+        if(search == null || search.isBlank()){
+            return fineRepository.findAll(pageable);
+        }
+        return fineRepository.findByLoanEntity_BookEntity_TitleContainingIgnoreCase(search, pageable);
     }
 
     @Override

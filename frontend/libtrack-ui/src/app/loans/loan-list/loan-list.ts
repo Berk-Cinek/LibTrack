@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, output } from '@angular/core';
 import { LoanApi } from '../loan-api';
 import { Loan } from '../loan';
 
@@ -19,6 +19,9 @@ export class LoanList {
   loading = signal(false);
 
   readonly pageSizeOptions = [10, 20, 50];
+
+  editRequested = output<Loan>();
+  deleteRequested = output<Loan>();
 
   constructor() {
     this.fetchPage(0);

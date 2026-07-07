@@ -1,0 +1,27 @@
+.row-amount {
+  font-weight: 600;
+  color: var(--ink);
+  flex-shrink: 0;
+  width: 60px;
+  text-align: right;
+}
+
+.fine-status {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.status-paid {
+  background: #eaf0e6;
+  color: var(--sage);
+}
+
+.status-unpaid {
+  background: #fbe9e6;
+  color: #a14b3f;
+}

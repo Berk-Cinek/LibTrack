@@ -18,7 +18,7 @@ public interface FineService {
 
     void delete(Long id);
 
-    List<FineEntity> findAll();
+    Page<FineEntity> findAll(Pageable pageable, String search);
 
     Page<FineEntity> findAll(Pageable pageable);
 

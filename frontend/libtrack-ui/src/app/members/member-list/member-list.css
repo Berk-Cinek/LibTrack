@@ -1,0 +1,19 @@
+.member-status {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.status-active-member {
+  background: #eaf0e6;
+  color: var(--sage);
+}
+
+.status-inactive-member {
+  background: #ece5d8;
+  color: #9a9284;
+}

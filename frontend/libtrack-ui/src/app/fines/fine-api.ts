@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpResponse, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Fine } from './fine';
 
@@ -13,6 +13,12 @@ export class FineApi {
 
   getFines(): Observable<FinePage> {
     return this.http.get<FinePage>(this.baseUrl);
+  }
+
+  getFinesAdmin(page = 0, size = 20, search = ''): Observable<FinePage> {
+    let params = new HttpParams().set('page', page).set('size', size);
+    if (search) params = params.set('search', search);
+    return this.http.get<FinePage>(this.baseUrl, { params });
   }
 
   getFineById(id: number): Observable<Fine> {
@@ -29,6 +35,12 @@ export class FineApi {
 
 }
 
-interface FinePage {
+export interface FinePage {
   content: Fine[];
+  totalPages: number;
+  totalElements: number;
+  number: number;
+  size: number;
+  first: boolean;
+  last: boolean;
 }

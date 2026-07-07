@@ -53,6 +53,13 @@ public class BookContorller {
        return books.map(bookMapper::mapTo);
     }
 
+    @Operation(summary = "Get all Books for admin", description = "Get all Books for admin with pagination")
+    @GetMapping(path = "/books/admin")
+    public Page<BookDto> listBooks(Pageable pageable,@RequestParam(required = false) String search){
+        Page<BookEntity> books = bookService.findAll(pageable, search);
+        return books.map(bookMapper::mapTo);
+    }
+
     @Operation(summary = "Get one Book", description = "Get one Book based on id match")
     @GetMapping(path = "/books/{id}")
     public ResponseEntity<BookDto> getById(@PathVariable("id") Long id){

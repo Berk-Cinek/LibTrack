@@ -1,6 +1,7 @@
 <div class="list-controls">
   <input #searchBox type="text" placeholder="Search members…"
-         (input)="onSearchInput(searchBox.value)" />
+         (input)="onSearchInput(searchBox.value)"/>
+
   <label class="page-size-select">
     Per page
     <select #sizeBox (change)="onSizeChange(sizeBox.value)">
@@ -12,13 +13,32 @@
 </div>
 
 @if (members().length === 0) {
-  <p class="status-line">No members found.</p>
+  <p class="empty-state">
+    @if (search()) {
+      No members match “{{ search() }}”.
+    } @else {
+      No members registered.
+    }
+  </p>
 } @else {
-  <ul>
+  <ul class="admin-rows">
     @for (member of members(); track member.id) {
-      <li>
-        <strong>{{ member.fullName }}</strong> — No: {{ member.memberNo }} <br>
-        Email: {{ member.email }}, Active: {{ member.isActive }}
+      <li class="admin-row">
+        <div class="row-main">
+          <span class="row-title">{{ member.fullName }}</span>
+          <span class="row-sub">No: {{ member.memberNo }} — {{ member.email }}</span>
+        </div>
+
+        <span class="member-status"
+              [class.status-active-member]="member.isActive"
+              [class.status-inactive-member]="!member.isActive">
+          {{ member.isActive ? 'ACTIVE' : 'INACTIVE' }}
+        </span>
+
+        <div class="row-actions">
+          <button (click)="editRequested.emit(member)">Edit</button>
+          <button class="danger" (click)="deleteRequested.emit(member)">Delete</button>
+        </div>
       </li>
     }
   </ul>

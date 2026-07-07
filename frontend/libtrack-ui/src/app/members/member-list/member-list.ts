@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, output } from '@angular/core';
 import { MemberApi } from '../member-api';
 import { Member } from '../member';
 
@@ -19,6 +19,9 @@ export class MemberList implements OnInit {
   totalPages = signal(0);
   first = signal(true);
   last = signal(true);
+
+  editRequested = output<Member>();
+  deleteRequested = output<Member>();
 
   ngOnInit() {
     this.loadMembers();

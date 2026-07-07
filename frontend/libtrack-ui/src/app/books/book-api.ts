@@ -1,6 +1,6 @@
 import { Service , Injectable, inject} from '@angular/core';
 import { Observable } from 'rxjs';
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpResponse, HttpParams } from '@angular/common/http';
 import { Book } from './book';
 
 
@@ -11,6 +11,18 @@ export class BookApi {
 
   getBooks(): Observable<BookPage>  {
     return this.http.get<BookPage>(this.baseUrl);
+  }
+
+  getBooksAdmin(page = 0, size = 20, search = ''): Observable<BookPage>{
+    let params = new HttpParams()
+      .set('page', page)
+      .set('size', size);
+
+    if (search) {
+      params = params.set('search', search);
+    }
+
+    return this.http.get<BookPage>(`${this.baseUrl}/admin`, { params });
   }
 
   getBookById(id : number) : Observable<Book>{
@@ -36,4 +48,10 @@ export class BookApi {
 
 interface BookPage{
   content: Book[];
+  totalPages: number;
+  totalElements: number;
+  number: number;
+  size: number;
+  first: boolean;
+  last: boolean;
 }

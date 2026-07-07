@@ -39,7 +39,7 @@ public class MemberController {
     @Operation(summary = "Get all Members", description = "Get all Members with pagination")
     @GetMapping(path = "/members")
     public Page<MemberDto> listMembers(Pageable pageable, @RequestParam(required = false) String search){
-        Page<MemberEntity> members = memberService.findAll(pageable, search);
+        Page<MemberEntity> members = memberService.findAll(search, pageable);
         return members.map(memberMapper::mapTo);
     }
     @Operation(summary = "Get one Member", description = "Get one Member based on id match")

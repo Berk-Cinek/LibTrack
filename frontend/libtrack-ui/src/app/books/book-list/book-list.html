@@ -1,10 +1,43 @@
-<h1>List of Books</h1>
-<ul>
+<div class="list-controls">
+  <input #searchBox type="text" placeholder="Search books…"
+         (input)="onSearchInput(searchBox.value)"/>
+
+  <label class="page-size-select">
+    Per page
+    <select #sizeBox (change)="onSizeChange(sizeBox.value)">
+      <option value="10">10</option>
+      <option value="20" selected>20</option>
+      <option value="50">50</option>
+    </select>
+  </label>
+</div>
+
+<ul class="admin-rows">
   @for (book of books(); track book.id) {
-    <li> {{book.title}} by {{book.author}} <br>
-      ID:{{ book.id }}, ISBN:{{book.isbn}} - {{book.genre}} <br>
-      Copies:{{book.totalCopies}} / {{book.availableCopies}}
-      Created at: {{book.createdAt}}
+    <li class="admin-row">
+      <div class="row-main">
+        <span class="row-title">{{ book.title }}</span>
+        <span class="row-sub">{{ book.author }} — {{ book.genre }}</span>
+      </div>
+
+      <div class="row-availability">
+        <div class="availability-bar">
+          <div class="availability-fill"
+               [style.width.%]="(book.availableCopies / book.totalCopies) * 100"></div>
+        </div>
+        <span class="availability-count">{{ book.availableCopies }} / {{ book.totalCopies }}</span>
+      </div>
+
+      <div class="row-actions">
+        <button (click)="editRequested.emit(book)">Edit</button>
+        <button class="danger" (click)="deleteRequested.emit(book)">Delete</button>
+      </div>
     </li>
   }
 </ul>
+
+<div class="pagination">
+  <button (click)="prevPage()" [disabled]="first()">Previous</button>
+  <span class="page-indicator">Page {{ page() + 1 }} of {{ totalPages() }}</span>
+  <button (click)="nextPage()" [disabled]="last()">Next</button>
+</div>

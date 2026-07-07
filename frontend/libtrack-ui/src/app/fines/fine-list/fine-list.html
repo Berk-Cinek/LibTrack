@@ -1,22 +1,55 @@
-<h1>Fines</h1>
+<div class="list-controls">
+  <input #searchBox type="text" placeholder="Search by book title…"
+         (input)="onSearchInput(searchBox.value)"/>
 
-<ul>
-  @if (fines().length === 0) {
-    <p>No fines found.</p>
-  } @else {
+  <label class="page-size-select">
+    Per page
+    <select #sizeBox (change)="onSizeChange(sizeBox.value)">
+      <option value="10">10</option>
+      <option value="20" selected>20</option>
+      <option value="50">50</option>
+    </select>
+  </label>
+</div>
+
+@if (fines().length === 0) {
+  <p class="empty-state">
+    @if (search()) {
+      No fines match “{{ search() }}”.
+    } @else {
+      No fines on record — all clear.
+    }
+  </p>
+} @else {
+  <ul class="admin-rows">
     @for (fine of fines(); track fine.id) {
-      <li>
-        ID: {{ fine.id }} <br>
-        Book: {{ fine.loanDto.bookDto.title }} <br>
-        Member: {{ fine.loanDto.memberId }} <br>
-        Days Overdue: {{ fine.daysOverdue }} <br>
-        Amount: {{ fine.amount }} <br>
-        Paid: {{ fine.isPaid }}
+      <li class="admin-row">
+        <div class="row-main">
+          <span class="row-title">{{ fine.loanDto.bookDto.title }}</span>
+          <span class="row-sub">
+            Member #{{ fine.loanDto.memberId }} — {{ fine.daysOverdue }} days overdue
+          </span>
+        </div>
 
-        @if (fine.isPaid && fine.paidAt) {
-          <br> Paid At: {{ fine.paidAt }}
-        }
+        <span class="row-amount">{{ fine.amount }}</span>
+
+        <span class="fine-status"
+              [class.status-paid]="fine.isPaid"
+              [class.status-unpaid]="!fine.isPaid">
+          {{ fine.isPaid ? 'PAID' : 'UNPAID' }}
+        </span>
+
+        <div class="row-actions">
+          <button (click)="editRequested.emit(fine)">Edit</button>
+          <button class="danger" (click)="deleteRequested.emit(fine)">Delete</button>
+        </div>
       </li>
     }
-  }
-</ul>
+  </ul>
+}
+
+<div class="pagination">
+  <button (click)="prevPage()" [disabled]="first()">Previous</button>
+  <span class="page-indicator">Page {{ page() + 1 }} of {{ totalPages() }}</span>
+  <button (click)="nextPage()" [disabled]="last()">Next</button>
+</div>
