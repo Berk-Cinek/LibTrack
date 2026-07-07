@@ -1,7 +1,4 @@
-<h1>Partially Update a Loan</h1>
-
-<input #idBox type="number" placeholder="Enter a Loan ID"
-       (input)="currentId.set(idBox.value)"/>
+<h3>Edit Loan</h3>
 
 <form [formGroup]="loanForm">
   <input type="datetime-local" formControlName="dueDate"/>
@@ -13,22 +10,5 @@
     <option value="OVERDUE">Overdue</option>
   </select>
 
-  <button (click)="partialUpdateLoan(idBox.value)" [disabled]="!currentId()">Submit</button>
+  <button (click)="submit()">Save</button>
 </form>
-
-@if (errorMessage()) {
-  <p class="error">{{ errorMessage() }}</p>
-}
-
-@if (result()) {
-  <li>
-    Loan ID: {{ result()!.id }}, Member: {{ result()!.memberId }} <br>
-
-    @if (result()!.bookDto) {
-      Book: {{ result()!.bookDto.title }} <br>
-    }
-
-    Due Date: {{ result()!.dueDate }} <br>
-    Status: {{ result()!.status }}
-  </li>
-}

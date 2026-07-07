@@ -1,58 +1,108 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, viewChild } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../../auth/auth-service';
 
 import { BookCreate } from '../../books/book-create/book-create';
 import { BookPartialUpdate } from '../../books/book-partial-update/book-partial-update';
-import { BookId } from '../../books/book-id/book-id';
 import { BookList } from '../../books/book-list/book-list';
-import { BookDelete } from '../../books/book-delete/book-delete';
+import { Book } from '../../books/book';
+import { BookApi } from '../../books/book-api';
 
 import { MemberList } from '../../members/member-list/member-list';
-import { MemberId } from '../../members/member-id/member-id';
 import { MemberCreate } from '../../members/member-create/member-create';
-import { MemberDelete } from '../../members/member-delete/member-delete';
 import { MemberPartialUpdate } from '../../members/member-partial-update/member-partial-update';
+import { Member } from '../../members/member';
+import { MemberApi } from '../../members/member-api';
 
-import { LoanCreate} from '../../loans/loan-create/loan-create';
-import { LoanDelete } from '../../loans/loan-delete/loan-delete'
-import { LoanList } from  '../../loans/loan-list/loan-list';
-import { LoanId } from '../../loans/loan-id/loan-id';
+import { LoanCreate } from '../../loans/loan-create/loan-create';
+import { LoanList } from '../../loans/loan-list/loan-list';
 import { LoanPartialUpdate } from '../../loans/loan-partial-update/loan-partial-update';
+import { Loan } from '../../loans/loan';
+import { LoanApi } from '../../loans/loan-api';
 
-import { FineDelete } from '../../fines/fine-delete/fine-delete';
 import { FineList } from '../../fines/fine-list/fine-list';
-import { FineId } from '../../fines/fine-id/fine-id';
 import { FinePartialUpdate } from '../../fines/fine-partial-update/fine-partial-update';
+import { Fine } from '../../fines/fine';
+import { FineApi } from '../../fines/fine-api';
 
 type AdminTab = 'books' | 'members' | 'loans' | 'fines';
 
 @Component({
   selector: 'app-admin-panel',
   imports: [
-    BookCreate,
-    BookPartialUpdate,
-    BookId,
-    BookList,
-    BookDelete,
-    MemberList,
-    MemberId,
-    MemberCreate,
-    MemberDelete,
-    MemberPartialUpdate,
-    LoanCreate,
-    LoanDelete,
-    LoanList,
-    LoanId,
-    LoanPartialUpdate,
-    FineDelete,
-    FineList,
-    FineId,
-    FinePartialUpdate,
+    BookCreate, BookPartialUpdate, BookList,
+    MemberCreate, MemberPartialUpdate, MemberList,
+    LoanCreate, LoanPartialUpdate, LoanList,
+    FinePartialUpdate, FineList,
   ],
   templateUrl: './admin-panel.html',
   styleUrl: './admin-panel.css',
 })
 export class AdminPanel {
   authService = inject(AuthService);
+  private bookApi = inject(BookApi);
+  private memberApi = inject(MemberApi);
+  private loanApi = inject(LoanApi);
+  private fineApi = inject(FineApi);
+
   activeTab = signal<AdminTab>('books');
+
+  selectedBook = signal<Book | null>(null);
+  bookList = viewChild(BookList);
+
+  onEditBook(book: Book) { this.selectedBook.set(book); }
+  onBookSaved() { this.selectedBook.set(null); this.bookList()?.loadBook(); }
+  onCancelBook() { this.selectedBook.set(null); }
+  onDeleteBook(book: Book) {
+    if (!confirm(`Delete "${book.title}"? This cannot be undone.`)) return;
+    this.bookApi.bookDelete(book.id).subscribe({
+      next: () => this.bookList()?.loadBook(),
+      error: err => alert(err.error?.message ?? 'Delete failed'),
+    });
+  }
+
+  selectedMember = signal<Member | null>(null);
+  memberList = viewChild(MemberList);
+
+  onEditMember(member: Member) { this.selectedMember.set(member); }
+  onMemberSaved() { this.selectedMember.set(null); this.memberList()?.loadMembers(); }
+  onCancelMember() { this.selectedMember.set(null); }
+  onDeleteMember(member: Member) {
+    if (!confirm(`Delete member "${member.fullName}"? This cannot be undone.`)) return;
+    this.memberApi.memberDelete(member.id).subscribe({
+      next: () => this.memberList()?.loadMembers(),
+      error: err => alert(err.error?.message ?? 'Delete failed'),
+    });
+  }
+
+  selectedLoan = signal<Loan | null>(null);
+  loanList = viewChild(LoanList);
+
+  onEditLoan(loan: Loan) { this.selectedLoan.set(loan); }
+  onLoanSaved() {
+    this.selectedLoan.set(null);
+    this.loanList()?.fetchPage(this.loanList()!.currentPage());
+  }
+  onCancelLoan() { this.selectedLoan.set(null); }
+  onDeleteLoan(loan: Loan) {
+    if (!confirm(`Delete this loan of "${loan.bookDto.title}"? This cannot be undone.`)) return;
+    this.loanApi.deleteLoan(loan.id).subscribe({
+      next: () => this.loanList()?.fetchPage(this.loanList()!.currentPage()),
+      error: err => alert(err.error?.message ?? 'Delete failed'),
+    });
+  }
+
+  selectedFine = signal<Fine | null>(null);
+  fineList = viewChild(FineList);
+
+  onEditFine(fine: Fine) { this.selectedFine.set(fine); }
+  onFineSaved() { this.selectedFine.set(null); this.fineList()?.loadFines(); }
+  onCancelFine() { this.selectedFine.set(null); }
+  onDeleteFine(fine: Fine) {
+    if (!confirm('Delete this fine? This cannot be undone.')) return;
+    this.fineApi.deleteFine(fine.id).subscribe({
+      next: () => this.fineList()?.loadFines(),
+      error: err => alert(err.error?.message ?? 'Delete failed'),
+    });
+  }
 }

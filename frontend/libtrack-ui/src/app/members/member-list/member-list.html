@@ -21,12 +21,12 @@
     }
   </p>
 } @else {
-  <ul class="admin-rows">
+  <ul class="member-items">
     @for (member of members(); track member.id) {
-      <li class="admin-row">
+      <li class="member-item">
         <div class="row-main">
-          <span class="row-title">{{ member.fullName }}</span>
-          <span class="row-sub">No: {{ member.memberNo }} — {{ member.email }}</span>
+          <span class="member-name">{{ member.fullName }}</span>
+          <span class="member-meta">No {{ member.memberNo }} · {{ member.email }}</span>
         </div>
 
         <span class="member-status"

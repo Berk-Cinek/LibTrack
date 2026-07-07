@@ -1,5 +1,6 @@
-import { Component, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule} from  '@angular/forms';
+import { Component, inject, input, output, effect } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 import { formToPartialBook } from '../book-mapper';
 import { BookApi } from '../book-api';
 import { Book } from '../book';
@@ -13,9 +14,9 @@ import { Book } from '../book';
 export class BookPartialUpdate {
   private bookApi = inject(BookApi);
   private formBuilder = inject(FormBuilder);
-  book = signal<Book | null>(null);
-  result = signal<Book | null>(null);
-  currentId = signal('');
+
+  book = input<Book | null>(null);
+  saved = output<Book>();
 
   bookForm = this.formBuilder.group({
     isbn: [''],
@@ -24,22 +25,32 @@ export class BookPartialUpdate {
     genre: [''],
     totalCopies: [''],
     availableCopies: [''],
-  })
+  });
 
-  submit(id: string){
-    const changes = formToPartialBook(this.bookForm.value);
-    this.partialUpdate(id, changes);
+  constructor() {
+    effect(() => {
+      const thisBook = this.book();
+      if (thisBook) {
+        this.bookForm.patchValue({
+          isbn: String(thisBook.isbn),
+          title: thisBook.title,
+          author: thisBook.author,
+          genre: thisBook.genre,
+          totalCopies: String(thisBook.totalCopies),
+          availableCopies: String(thisBook.availableCopies),
+        });
+      }
+    });
   }
 
-  partialUpdate(id : string, changes: Partial<Book>){
-    this.bookApi.bookPartialUpdate(Number(id), changes).subscribe({
-      next: updatedBook => {
-        alert('Updated successfully');
-        this.result.set(updatedBook);
-      },
-      error: () => {
-        alert('Update failed - please try again');
-      },
-    })
+  submit() {
+    const thisBook = this.book();
+    if (!thisBook) return;
+
+    const changes = formToPartialBook(this.bookForm.value);
+    this.bookApi.bookPartialUpdate(thisBook.id, changes).subscribe({
+      next: updated => this.saved.emit(updated),
+      error: (err: HttpErrorResponse) => alert(err.error?.message ?? 'Update failed'),
+    });
   }
 }

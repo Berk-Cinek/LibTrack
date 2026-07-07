@@ -1,8 +1,9 @@
-import { Component, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule} from  '@angular/forms';
+import { Component, inject, input, output, effect } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 import { formToPartialMember } from '../member-mapper';
 import { MemberApi } from '../member-api';
-import { Member } from  '../member';
+import { Member } from '../member';
 
 @Component({
   selector: 'app-member-partial-update',
@@ -13,27 +14,39 @@ import { Member } from  '../member';
 export class MemberPartialUpdate {
   private memberApi = inject(MemberApi);
   private formBuilder = inject(FormBuilder);
-  member = signal< Member | null >(null);
-  currentId = signal('');
+
+  member = input<Member | null>(null);
+  saved = output<Member>();
 
   memberForm = this.formBuilder.group({
     memberNo: [''],
     fullName: [''],
     email: [''],
     isActive: [false],
-  })
+  });
 
-  partialUpdateMember(id: String){
+  constructor() {
+    effect(() => {
+      const m = this.member();
+      if (m) {
+        this.memberForm.patchValue({
+          memberNo: String(m.memberNo),
+          fullName: m.fullName,
+          email: m.email,
+          isActive: m.isActive,
+        });
+      }
+    });
+  }
+
+  submit() {
+    const m = this.member();
+    if (!m) return;
+
     const changes = formToPartialMember(this.memberForm.value);
-    this.memberApi.PartialUpdateMember(Number(id), changes).subscribe({
-      next: updatedMember => {
-        console.log('sending changes:', changes);
-        alert("Member updated successfully");
-        this.member.set(updatedMember);
-      },
-      error: () => {
-       alert("Update Failed - Please Try again");
-      },
-    })
+    this.memberApi.PartialUpdateMember(m.id, changes).subscribe({
+      next: updated => this.saved.emit(updated),
+      error: (err: HttpErrorResponse) => alert(err.error?.message ?? 'Update failed'),
+    });
   }
 }

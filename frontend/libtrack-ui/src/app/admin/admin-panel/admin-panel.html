@@ -1,7 +1,8 @@
 <section class="admin-panel">
   <h1>Admin Panel</h1>
 
-  @if(authService.isAdmin()){
+  @if (authService.isAdmin()) {
+
     <div class="tab-bar">
       <button [class.active]="activeTab() === 'books'"   (click)="activeTab.set('books')">Books</button>
       <button [class.active]="activeTab() === 'members'" (click)="activeTab.set('members')">Members</button>
@@ -10,34 +11,71 @@
     </div>
 
     @switch (activeTab()) {
+
       @case ('books') {
-        <app-book-list/>
-        <app-book-id/>
-        <app-book-create/>
-        <app-book-partial-update/>
-        <app-book-delete/>
+        <app-book-create />
+        <app-book-list
+          (editRequested)="onEditBook($event)"
+          (deleteRequested)="onDeleteBook($event)" />
+
+        @if (selectedBook()) {
+          <div class="modal-backdrop" (click)="onCancelBook()">
+            <div class="modal-content" (click)="$event.stopPropagation()">
+              <app-book-partial-update [book]="selectedBook()" (saved)="onBookSaved()" />
+              <button class="modal-cancel" (click)="onCancelBook()">Cancel</button>
+            </div>
+          </div>
+        }
       }
+
       @case ('members') {
-        <app-member-list/>
-        <app-member-id/>
-        <app-member-create/>
-        <app-member-partial-update/>
-        <app-member-delete/>
+        <app-member-create />
+        <app-member-list
+          (editRequested)="onEditMember($event)"
+          (deleteRequested)="onDeleteMember($event)" />
+
+        @if (selectedMember()) {
+          <div class="modal-backdrop" (click)="onCancelMember()">
+            <div class="modal-content" (click)="$event.stopPropagation()">
+              <app-member-partial-update [member]="selectedMember()" (saved)="onMemberSaved()" />
+              <button class="modal-cancel" (click)="onCancelMember()">Cancel</button>
+            </div>
+          </div>
+        }
       }
+
       @case ('loans') {
-        <app-loan-list/>
-        <app-loan-id/>
-        <app-loan-create/>
-        <app-loan-partial-update/>
-        <app-loan-delete/>
+        <app-loan-create />
+        <app-loan-list
+          (editRequested)="onEditLoan($event)"
+          (deleteRequested)="onDeleteLoan($event)" />
+
+        @if (selectedLoan()) {
+          <div class="modal-backdrop" (click)="onCancelLoan()">
+            <div class="modal-content" (click)="$event.stopPropagation()">
+              <app-loan-partial-update [loan]="selectedLoan()" (saved)="onLoanSaved()" />
+              <button class="modal-cancel" (click)="onCancelLoan()">Cancel</button>
+            </div>
+          </div>
+        }
       }
+
       @case ('fines') {
-        <app-fine-list/>
-        <app-fine-id/>
-        <app-fine-partial-update/>
-        <app-fine-delete/>
+        <app-fine-list
+          (editRequested)="onEditFine($event)"
+          (deleteRequested)="onDeleteFine($event)" />
+
+        @if (selectedFine()) {
+          <div class="modal-backdrop" (click)="onCancelFine()">
+            <div class="modal-content" (click)="$event.stopPropagation()">
+              <app-fine-partial-update [fine]="selectedFine()" (saved)="onFineSaved()" />
+              <button class="modal-cancel" (click)="onCancelFine()">Cancel</button>
+            </div>
+          </div>
+        }
       }
     }
+
   } @else {
     <p class="status-line">Admin access required.</p>
   }
