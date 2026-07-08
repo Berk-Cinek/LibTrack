@@ -1,8 +1,10 @@
 package com.berk.libtrack.services.impl;
 
 import com.berk.libtrack.domain.entities.BookEntity;
+import com.berk.libtrack.exceptions.DataIntegrityException;
 import com.berk.libtrack.exceptions.ResourceNotFoundException;
 import com.berk.libtrack.repositories.BookRepository;
+import com.berk.libtrack.repositories.LoanRepository;
 import com.berk.libtrack.services.BookService;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -17,10 +19,12 @@ import java.util.Optional;
 @Service
 public class BookServiceImpl implements BookService {
 
+    private final LoanRepository loanRepository;
     private BookRepository bookRepository;
 
-    public BookServiceImpl(BookRepository bookRepository) {
+    public BookServiceImpl(BookRepository bookRepository, LoanRepository loanRepository) {
         this.bookRepository = bookRepository;
+        this.loanRepository = loanRepository;
     }
 
     @Override
@@ -53,7 +57,13 @@ public class BookServiceImpl implements BookService {
     @Override
     @CacheEvict(value = "BOOK_CACHE", key = "#id")
     public void delete(Long id) {
+        if(loanRepository.existsByBookEntity_Id(id)){
+            throw new DataIntegrityException(
+                    "cannot delete this book, it has loan records, consider making it unavailable");
+        }
+
         bookRepository.deleteById(id);
+
     }
 
     @Override

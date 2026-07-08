@@ -34,14 +34,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
     }
 
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ErrorResponse> handleDataIntegrity(
-            DataIntegrityViolationException ex, HttpServletRequest req){
-        ErrorResponse body = new ErrorResponse(Instant.now(),
-                409, ex.getMessage(), req.getRequestURI());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
-    }
-
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponse> handleMessageIntegrity(
             HttpMessageNotReadableException ex, HttpServletRequest req){
@@ -55,5 +47,23 @@ public class GlobalExceptionHandler {
             AuthorizationFailedException ex, HttpServletRequest req){
         ErrorResponse body = new ErrorResponse(Instant.now(), 401, ex.getMessage(), req.getRequestURI());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(body);
+    }
+
+    @ExceptionHandler(DataIntegrityException.class)
+    public ResponseEntity<ErrorResponse> HandleDataIntegrityViolation(
+            DataIntegrityException ex, HttpServletRequest req){
+        ErrorResponse body = new ErrorResponse(Instant.now(), 409, ex.getMessage(), req.getRequestURI());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleSpringDataIntegrity(
+            DataIntegrityViolationException ex, HttpServletRequest req) {
+        ErrorResponse body = new ErrorResponse(
+                Instant.now(),
+                409,
+                "This operation conflicts with existing related records.",
+                req.getRequestURI());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
     }
 }

@@ -1,7 +1,10 @@
 package com.berk.libtrack.services.impl;
 
 import com.berk.libtrack.domain.entities.MemberEntity;
+import com.berk.libtrack.exceptions.BorrowingNotAllowedException;
+import com.berk.libtrack.exceptions.DataIntegrityException;
 import com.berk.libtrack.exceptions.ResourceNotFoundException;
+import com.berk.libtrack.repositories.LoanRepository;
 import com.berk.libtrack.repositories.MemberRepository;
 import com.berk.libtrack.services.MemberService;
 import org.springframework.cache.annotation.CacheEvict;
@@ -17,10 +20,12 @@ import java.util.Optional;
 @Service
 public class MemberServiceImpl implements MemberService {
 
+    private final LoanRepository loanRepository;
     private MemberRepository memberRepository;
 
-    public MemberServiceImpl(MemberRepository memberRepository) {
+    public MemberServiceImpl(MemberRepository memberRepository, LoanRepository loanRepository) {
         this.memberRepository = memberRepository;
+        this.loanRepository = loanRepository;
     }
 
     @Override
@@ -52,6 +57,17 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @CacheEvict(value = "MEMBER_CACHE", key = "#id")
     public void delete(Long id) {
+        MemberEntity member = memberRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Member not found: " + id));
+
+        if (member.getMemberNo() == 999999L) {
+            throw new DataIntegrityException("The system admin account cannot be deleted.");
+        }
+
+        if (loanRepository.existsByMemberEntity_Id(id)) {
+            throw new DataIntegrityException("Cannot delete this member, they have loan records.");
+        }
+
         memberRepository.deleteById(id);
     }
 
@@ -60,7 +76,7 @@ public class MemberServiceImpl implements MemberService {
         if (search == null || search.isBlank()) {
             return memberRepository.findAll(pageable);
         }
-        return memberRepository.findByFullName(search, pageable);
+        return memberRepository.findByFullNameContainingIgnoreCase (search, pageable);
     }
 
     @Override

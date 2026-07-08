@@ -10,5 +10,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MemberRepository extends JpaRepository<MemberEntity, Long>, PagingAndSortingRepository<MemberEntity, Long> {
 
-    Page<MemberEntity> findByFullName(String search, Pageable pageable);
+    Page<MemberEntity> findByFullNameContainingIgnoreCase(String search, Pageable pageable);
 }

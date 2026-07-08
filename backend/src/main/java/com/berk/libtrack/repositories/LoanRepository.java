@@ -26,4 +26,8 @@ public interface LoanRepository extends JpaRepository<LoanEntity, Long>,
     boolean existsByMemberEntityAndBookEntityAndStatusNot(MemberEntity member, BookEntity book, LoanStatus status);
 
     Page<LoanEntity> findByMemberEntity_Id(Long memberId, Pageable pageable);
+
+    boolean existsByMemberEntity_Id(Long memberId);
+
+    boolean existsByBookEntity_Id(Long bookEntityId);
 }

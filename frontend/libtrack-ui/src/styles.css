@@ -105,3 +105,35 @@ form {
   color: var(--sage);
   font-style: italic;
 }
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(36, 32, 25, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 8px;
+  border-left: 5px solid var(--spine);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  padding: 1.75rem 2rem;
+  max-width: 520px;
+  width: 100%;
+}
+
+.modal-cancel {
+  margin-top: 0.75rem;
+  background: none;
+  color: var(--sage);
+  border: 1px solid var(--border);
+}
+
+.modal-cancel:hover:not(:disabled) {
+  background: #ece5d8;
+  color: var(--ink);
+}
