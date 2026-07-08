@@ -2,12 +2,13 @@ import { Service , Injectable, inject} from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpResponse, HttpParams } from '@angular/common/http';
 import { Book } from './book';
+import { environment } from '../../environments/environment';
 
 
 @Injectable({ providedIn: 'root'})
 export class BookApi {
   private http = inject(HttpClient);
-  private baseUrl = 'http://localhost:8080/books';
+  private baseUrl = `${environment.apiUrl}/books`;
 
   getBooks(): Observable<BookPage>  {
     return this.http.get<BookPage>(this.baseUrl);

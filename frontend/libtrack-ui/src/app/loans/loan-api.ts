@@ -2,11 +2,12 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Loan, CreateLoanRequest } from './loan';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class LoanApi {
   private http = inject(HttpClient);
-  private baseUrl = 'http://localhost:8080/loans';
+  private baseUrl = `${environment.apiUrl}/loans`;
 
   getLoans(page = 0, size = 20, search = ''): Observable<LoanPage> {
     let params = new HttpParams()

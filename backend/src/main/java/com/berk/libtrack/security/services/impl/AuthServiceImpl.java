@@ -6,7 +6,9 @@ import com.berk.libtrack.domain.dto.RegisterRequest;
 import com.berk.libtrack.domain.entities.MemberEntity;
 import com.berk.libtrack.domain.entities.UserEntity;
 import com.berk.libtrack.exceptions.AuthorizationFailedException;
+import com.berk.libtrack.exceptions.DataIntegrityException;
 import com.berk.libtrack.exceptions.ResourceNotFoundException;
+import com.berk.libtrack.repositories.MemberRepository;
 import com.berk.libtrack.repositories.UserRepository;
 import com.berk.libtrack.security.services.JwtService;
 import com.berk.libtrack.security.services.AuthService;
@@ -19,22 +21,33 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final MemberRepository memberRepository;
 
     public AuthServiceImpl(UserRepository userRepository,
                            PasswordEncoder passwordEncoder,
-                           JwtService jwtService) {
+                           JwtService jwtService, MemberRepository memberRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.memberRepository = memberRepository;
     }
 
     @Override
     public void register(RegisterRequest request) {
-        MemberEntity memberRef = new MemberEntity();
-        memberRef.setId(request.getMemberId());
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new DataIntegrityException("This username is already taken.");
+        }
+
+        MemberEntity member = memberRepository.findByMemberNo(request.getMemberNo())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "No member found with member number: " + request.getMemberNo()));
+
+        if (userRepository.existsByMemberEntity_Id(member.getId())) {
+            throw new DataIntegrityException("This member already has an account.");
+        }
 
         UserEntity user = UserEntity.builder()
-                .memberEntity(memberRef)
+                .memberEntity(member)
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role("MEMBER")

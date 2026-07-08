@@ -2,11 +2,12 @@ import { Service, Injectable, inject} from '@angular/core';
 import { HttpClient, HttpResponse, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Member } from './member';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root'})
 export class MemberApi {
   private http = inject(HttpClient);
-  private baseUrl = 'http://localhost:8080/members';
+  private baseUrl = `${environment.apiUrl}/members`;
 
   getMembers(page = 0, size = 20, search = ''): Observable<MemberPage> {
     let params = new HttpParams().set('page', page).set('size', size);

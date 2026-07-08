@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 interface LoginResponse {
   username: string;
@@ -18,7 +19,7 @@ interface LoginRequest {
 export class AuthService {
   private router = inject(Router);
   private http = inject(HttpClient);
-  private baseUrl = 'http://localhost:8080/auth';
+  private baseUrl = `${environment.apiUrl}/auth`;
 
   username = signal<string | null>(null);
   role = signal<string | null>(null);
@@ -63,6 +64,10 @@ export class AuthService {
         console.log('logout FAILED:', err);
       },
     });
+  }
+
+  register(request: { memberNo: number; username: string; password: string }): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/register`, request);
   }
 
   checkSession() {

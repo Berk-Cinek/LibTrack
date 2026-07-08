@@ -14,8 +14,15 @@ export class LoginWidget {
   private formBuilder = inject(FormBuilder);
 
   loginError = signal('');
+  registerMode = signal(false);
 
   loginForm = this.formBuilder.group({
+    username: ['', Validators.required],
+    password: ['', Validators.required],
+  });
+
+  registerForm = this.formBuilder.group({
+    memberNo: ['', Validators.required],
     username: ['', Validators.required],
     password: ['', Validators.required],
   });
@@ -33,6 +40,24 @@ export class LoginWidget {
       },
       error: (err: HttpErrorResponse) => {
         this.loginError.set(err.error?.message ?? 'Login failed');
+      },
+    });
+  }
+
+  onRegister() {
+    if (this.registerForm.invalid) return;
+    this.authService.register({
+      memberNo: Number(this.registerForm.value.memberNo!),
+      username: this.registerForm.value.username!,
+      password: this.registerForm.value.password!,
+    }).subscribe({
+      next: () => {
+        alert('Account created, you can log in now.');
+        this.registerMode.set(false);
+        this.registerForm.reset();
+      },
+      error: (err: HttpErrorResponse) => {
+        alert(err.error?.message ?? 'Registration failed');
       },
     });
   }

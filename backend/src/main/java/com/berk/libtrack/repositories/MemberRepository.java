@@ -7,8 +7,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface MemberRepository extends JpaRepository<MemberEntity, Long>, PagingAndSortingRepository<MemberEntity, Long> {
 
     Page<MemberEntity> findByFullNameContainingIgnoreCase(String search, Pageable pageable);
+
+    Optional<MemberEntity> findByMemberNo(Long memberNo);
 }

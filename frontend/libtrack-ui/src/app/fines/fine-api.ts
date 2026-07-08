@@ -2,14 +2,14 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpResponse, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Fine } from './fine';
-
+import { environment } from '../../environments/environment';
 
 
 @Injectable({ providedIn: 'root' })
 export class FineApi {
 
   private http = inject(HttpClient);
-  private baseUrl = 'http://localhost:8080/fines';
+  private baseUrl = `${environment.apiUrl}/fines`;
 
   getFines(): Observable<FinePage> {
     return this.http.get<FinePage>(this.baseUrl);

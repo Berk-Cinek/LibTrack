@@ -51,6 +51,15 @@
   padding: 0;
 }
 
+.auth-link {
+  background: none;
+  color: var(--spine, #7a4b30);
+  border: none;
+  text-decoration: underline;
+  padding: 0.4rem 0.5rem;
+  font-size: 0.85rem;
+}
+
 nav details {
   position: relative;
 }

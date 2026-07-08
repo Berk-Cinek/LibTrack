@@ -6,14 +6,24 @@
     </span>
     <button (click)="onLogoutClick()">Log out</button>
   } @else {
-    <form class="auth-form" (ngSubmit)="onLogin()" [formGroup]="loginForm">
-      <input type="text" formControlName="username" placeholder="Username" />
-      <input type="password" formControlName="password" placeholder="Password" />
-      <button type="submit">Log in</button>
-    </form>
-    @if (loginError()) {
-      <span class="auth-error">{{ loginError() }}</span>
+    @if (!registerMode()) {
+      <form class="auth-form" (ngSubmit)="onLogin()" [formGroup]="loginForm">
+        <input type="text" formControlName="username" placeholder="Username" />
+        <input type="password" formControlName="password" placeholder="Password" />
+        <button type="submit">Log in</button>
+        <button type="button" class="auth-link" (click)="registerMode.set(true)">Register</button>
+      </form>
+    } @else {
+      <form class="auth-form" (ngSubmit)="onRegister()" [formGroup]="registerForm">
+        <input type="number" formControlName="memberNo" placeholder="Member No" />
+        <input type="text" formControlName="username" placeholder="Username" />
+        <input type="password" formControlName="password" placeholder="Password" />
+        <button type="submit">Sign up</button>
+        <button type="button" class="auth-link" (click)="registerMode.set(false)">Back</button>
+      </form>
     }
+    @if (loginError()) { <span class="auth-error">{{ loginError() }}</span> }
+
     @if (authService.authNotice()) {
       <span class="auth-error">{{ authService.authNotice() }}</span>
     }
