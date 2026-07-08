@@ -20,6 +20,7 @@ export class AuthService {
   username = signal<string | null>(null);
   role = signal<string | null>(null);
   checked = signal(false);
+  authNotice = signal('');
 
   isLoggedIn = () => this.username() !== null;
   isAdmin = () => this.role() === 'ADMIN';

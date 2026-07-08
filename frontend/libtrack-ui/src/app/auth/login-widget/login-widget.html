@@ -14,5 +14,8 @@
     @if (loginError()) {
       <span class="auth-error">{{ loginError() }}</span>
     }
+    @if (authService.authNotice()) {
+      <span class="auth-error">{{ authService.authNotice() }}</span>
+    }
   }
 </div>

@@ -1,22 +1,10 @@
 import { Routes } from '@angular/router';
-import {BookList} from './books/book-list/book-list';
-import {BookId} from './books/book-id/book-id'
-import {BookPartialUpdate} from './books/book-partial-update/book-partial-update'
-import {BookFullUpdate} from './books/book-full-update/book-full-update';
-import {BookDelete} from './books/book-delete/book-delete';
-import {MemberList} from './members/member-list/member-list';
-import {MemberId} from './members/member-id/member-id';
-import {BookCreate} from './books/book-create/book-create';
-import {MemberCreate} from './members/member-create/member-create';
-import {MemberFullUpdate} from './members/member-full-update/member-full-update';
-import {MemberPartialUpdate} from './members/member-partial-update/member-partial-update';
-import {MemberDelete} from './members/member-delete/member-delete';
-import {LoanList} from './loans/loan-list/loan-list';
-import {LoanId} from './loans/loan-id/loan-id';
-import {LoanCreate} from './loans/loan-create/loan-create';
-import {BookCatalog} from './books/book-catalog/book-catalog';
+import { LoanCreate } from './loans/loan-create/loan-create';
+import { BookCatalog } from './books/book-catalog/book-catalog';
 import { MyLoans } from './loans/my-loans/my-loans';
-import {AdminPanel} from './admin/admin-panel/admin-panel';
+import { AdminPanel } from './admin/admin-panel/admin-panel';
+import { adminGuard } from './auth/route-guards/admin-guard';
+import { authGuard } from  './auth/route-guards/auth-guard';
 
 export const routes: Routes = [
   { path: '',
@@ -31,16 +19,19 @@ export const routes: Routes = [
   {
     path: 'myLoans',
     component: MyLoans,
+    canActivate: [authGuard],
     title: "List all loans of user"
   },
   {
     path: 'loanCreate',
     component: LoanCreate,
+    canActivate: [authGuard],
     title: "Creation of loan for borrowing a book by id"
   },
   {
     path: 'adminPanel',
     component: AdminPanel,
+    canActivate: [adminGuard],
     title: "Admin panel for CRUD"
   }
 ];
