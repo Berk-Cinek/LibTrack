@@ -13,7 +13,7 @@
     @switch (activeTab()) {
 
       @case ('books') {
-        <app-book-create />
+        <app-book-create (created)="onBookCreated()"/>
         <app-book-list
           (editRequested)="onEditBook($event)"
           (deleteRequested)="onDeleteBook($event)" />

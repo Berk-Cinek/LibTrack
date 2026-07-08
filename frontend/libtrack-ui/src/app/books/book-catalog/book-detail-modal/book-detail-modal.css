@@ -76,6 +76,61 @@
   margin: 0;
 }
 
+.borrow-info {
+  margin-top: 0.6rem;
+  font-size: 0.85rem;
+  color: #a14b3f;
+  background: #fbe9e6;
+  border-left: 3px solid #a14b3f;
+  border-radius: 4px;
+  padding: 0.5rem 0.75rem;
+}
+
+.detail-availability {
+  margin: 1rem 0 0.75rem 0;
+}
+
+.availability-bar {
+  height: 6px;
+  background: #ece5d8;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 0.3rem;
+}
+
+.availability-fill {
+  height: 100%;
+  background: var(--spine, #7a4b30);
+  border-radius: 3px;
+}
+
+.availability-count {
+  font-size: 0.78rem;
+  color: var(--sage, #5b6d55);
+}
+
+.detail-actions {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 1.25rem;
+}
+
+.borrow-btn {
+  background: var(--spine, #7a4b30);
+  color: var(--paper, #faf6ee);
+}
+
+.close-btn {
+  background: none;
+  color: var(--sage, #5b6d55);
+  border: 1px solid #d8cfc0;
+}
+
+.close-btn:hover:not(:disabled) {
+  background: #ece5d8;
+  color: var(--ink, #242019);
+}
+
 @keyframes fade-in {
   from { opacity: 0; }
   to { opacity: 1; }

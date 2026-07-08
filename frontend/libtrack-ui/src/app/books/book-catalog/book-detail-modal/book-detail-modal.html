@@ -1,14 +1,41 @@
 <div class="modal-backdrop" (click)="closed.emit()">
   <div class="modal-content" (click)="$event.stopPropagation()">
-    <h2>{{ book().title }}</h2>
-    <p class="book-author">{{ book().author }}</p>
-    <p class="book-genre">{{ book().genre }}</p>
-    <p class="book-isbn">ISBN {{ book().isbn }}</p>
 
-    <button (click)="closed.emit()">Close</button>
+    <button class="modal-close" (click)="closed.emit()">×</button>
 
-    <a class="modal-loan-btn" [routerLink]="['/loanCreate']" [queryParams]="{ bookId: book().id }">
-      Loan this book
-    </a>
+    <p class="modal-genre">{{ book().genre }}</p>
+    <h2 class="modal-title">{{ book().title }}</h2>
+    <p class="modal-author">{{ book().author }}</p>
+
+    <div class="detail-availability">
+      <div class="availability-bar">
+        <div class="availability-fill"
+             [style.width.%]="(book().availableCopies / book().totalCopies) * 100"></div>
+      </div>
+      <span class="availability-count">
+        {{ book().availableCopies }} / {{ book().totalCopies }} available
+      </span>
+    </div>
+
+    <div class="modal-divider"></div>
+    <p class="modal-isbn">ISBN {{ book().isbn }}</p>
+
+    <div class="detail-actions">
+      @if (authService.isLoggedIn()) {
+        <button class="borrow-btn" (click)="borrow(book())"
+                [disabled]="book().availableCopies === 0">
+          Borrow
+        </button>
+      }
+      <button class="close-btn" (click)="closed.emit()">Close</button>
+    </div>
+
+    @if (borrowError()) {
+      <p class="borrow-info">{{ borrowError() }}</p>
+    }
+    @if (!authService.isLoggedIn()) {
+      <p class="borrow-info">Log in to borrow this book.</p>
+    }
+
   </div>
 </div>

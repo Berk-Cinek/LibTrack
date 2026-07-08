@@ -38,6 +38,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/books/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/loans/mine").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/loans/borrow").authenticated()
                         .requestMatchers("/loans/**").hasRole("ADMIN")
                         .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/auth/users/*/promote").hasRole("ADMIN")

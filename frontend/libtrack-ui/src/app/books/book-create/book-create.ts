@@ -1,5 +1,6 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from  '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 import { formToBook } from '../book-mapper';
 import { BookApi } from '../book-api';
 import { Book } from '../book';
@@ -16,6 +17,9 @@ export class BookCreate {
   private formBuilder = inject(FormBuilder);
   book = signal<Book | null>(null);
 
+  created = output<Book>();
+
+
   bookForm = this.formBuilder.group({
     isbn: ['', Validators.required],
     title: ['', Validators.required],
@@ -30,10 +34,11 @@ export class BookCreate {
     this.bookApi.createBook(created).subscribe({
       next: createdBook => {
         alert("Book created!")
-        this.book.set(createdBook);
+        this.created.emit(createdBook);
+        this.bookForm.reset();
       },
-      error: () => {
-        alert("Creation Failed - Please try again")
+      error: (err: HttpErrorResponse) => {
+        alert(err.error?.message ?? 'Create failed');
       },
     })
   }

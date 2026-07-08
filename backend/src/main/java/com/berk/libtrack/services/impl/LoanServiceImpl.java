@@ -104,13 +104,45 @@ public class LoanServiceImpl implements LoanService {
     public LoanEntity partialUpdate(Long id, LoanEntity loanEntity) {
         loanEntity.setId(id);
 
-        return loanRepository.findById(id).map(existingLoan ->{
+
+        return loanRepository.findById(id).map(existingLoan -> {
+            LoanStatus oldStatus = existingLoan.getStatus();
+
             Optional.ofNullable(loanEntity.getMemberEntity()).ifPresent(existingLoan::setMemberEntity);
             Optional.ofNullable(loanEntity.getBookEntity()).ifPresent(existingLoan::setBookEntity);
             Optional.ofNullable(loanEntity.getBorrowedAt()).ifPresent(existingLoan::setBorrowedAt);
             Optional.ofNullable(loanEntity.getDueDate()).ifPresent(existingLoan::setDueDate);
             Optional.ofNullable(loanEntity.getReturnedAt()).ifPresent(existingLoan::setReturnedAt);
             Optional.ofNullable(loanEntity.getStatus()).ifPresent(existingLoan::setStatus);
+
+            LoanStatus newStatus = existingLoan.getStatus();
+
+            boolean wasHoldingCopy = (oldStatus == LoanStatus.ACTIVE || oldStatus == LoanStatus.OVERDUE);
+            boolean nowReturned = (newStatus == LoanStatus.RETURNED);
+
+            if (wasHoldingCopy && nowReturned) {
+                BookEntity book = existingLoan.getBookEntity();
+                book.setAvailableCopies(book.getAvailableCopies() + 1);
+                bookRepository.save(book);
+
+                if (existingLoan.getReturnedAt() == null) {
+                    existingLoan.setReturnedAt(LocalDateTime.now());
+                }
+            }
+
+            boolean wasReturned = (oldStatus == LoanStatus.RETURNED);
+            boolean nowHoldingCopy = (newStatus == LoanStatus.ACTIVE || newStatus == LoanStatus.OVERDUE);
+
+            if (wasReturned && nowHoldingCopy) {
+                BookEntity book = existingLoan.getBookEntity();
+                if (book.getAvailableCopies() <= 0) {
+                    throw new BorrowingNotAllowedException("No available copies to re-activate this loan.");
+                }
+                book.setAvailableCopies(book.getAvailableCopies() - 1);
+                bookRepository.save(book);
+                existingLoan.setReturnedAt(null);
+            }
+
             return loanRepository.save(existingLoan);
         }).orElseThrow(() -> new ResourceNotFoundException("Non Existing loan id:" + id));
     }
@@ -118,6 +150,15 @@ public class LoanServiceImpl implements LoanService {
     @Override
     @CacheEvict(value = "LOAN_CACHE", key = "#id")
     public void delete(Long id) {
+        LoanEntity loan = loanRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Loan not found: " + id));
+
+        if (loan.getStatus() == LoanStatus.ACTIVE || loan.getStatus() == LoanStatus.OVERDUE) {
+            BookEntity book = loan.getBookEntity();
+            book.setAvailableCopies(book.getAvailableCopies() + 1);
+            bookRepository.save(book);
+        }
+
         loanRepository.deleteById(id);
     }
 

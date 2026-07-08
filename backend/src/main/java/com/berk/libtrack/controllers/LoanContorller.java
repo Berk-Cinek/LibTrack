@@ -54,6 +54,19 @@ public class LoanContorller {
                 .map(loanMapper::mapTo));
     }
 
+    @Operation(summary = "Borrow a book", description = "Creates a loan for the currently logged-in member")
+    @PostMapping("/loans/borrow")
+    public ResponseEntity<LoanDto> borrowBook(@RequestBody LoanDto loanDto) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) auth.getPrincipal();
+        Long memberId = authService.getMemberIdForUsername(userDetails.getUsername());
+
+        loanDto.setMemberId(memberId);
+
+        LoanEntity created = loanService.loanCreate(loanMapper.mapFrom(loanDto));
+        return new ResponseEntity<>(loanMapper.mapTo(created), HttpStatus.CREATED);
+    }
+
     @Operation(summary = "Get all Loan", description = "Get all Loan with pagination + search string")
     @GetMapping(path = "/loans")
     public Page<LoanDto> listLoans(Pageable pageable, @RequestParam(required = false) String search){

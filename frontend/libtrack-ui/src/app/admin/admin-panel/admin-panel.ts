@@ -51,6 +51,7 @@ export class AdminPanel {
   bookList = viewChild(BookList);
 
   onEditBook(book: Book) { this.selectedBook.set(book); }
+  onBookCreated() { this.bookList()?.loadBook(); }
   onBookSaved() { this.selectedBook.set(null); this.bookList()?.loadBook(); }
   onCancelBook() { this.selectedBook.set(null); }
   onDeleteBook(book: Book) {

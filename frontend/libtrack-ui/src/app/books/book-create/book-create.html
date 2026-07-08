@@ -10,11 +10,3 @@
 
   <button (click)="createOneBook()" [disabled]="bookForm.invalid"> Submit </button>
 </form>
-
-@if (book()) {
-  <li> {{ book()!.title }} by {{ book()!.author }} <br>
-    ID:{{ book()!.id }}, ISBN:{{ book()!.isbn }} - {{ book()!.genre }} <br>
-    Copies:{{ book()!.totalCopies }} / {{ book()!.availableCopies }}
-    Created at: {{ book()!.createdAt }}
-  </li>
-}

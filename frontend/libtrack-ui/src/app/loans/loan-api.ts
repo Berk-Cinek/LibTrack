@@ -28,6 +28,10 @@ export class LoanApi {
     return this.http.post<Loan>(this.baseUrl, created);
   }
 
+  borrowBook(bookId: number): Observable<Loan> {
+    return this.http.post<Loan>(`${this.baseUrl}/borrow`, { bookId });
+  }
+
   partialUpdate(id: number, changes: Partial<Loan>): Observable<Loan> {
     return this.http.patch<Loan>(`${this.baseUrl}/${id}`, changes);
   }

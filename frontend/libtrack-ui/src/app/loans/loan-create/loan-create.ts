@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
@@ -24,6 +24,8 @@ export class LoanCreate {
   result = signal<Loan | null>(null);
   errorMessage = signal('');
 
+  created = output<Loan>();
+
   bookId = toSignal(
     this.route.queryParamMap.pipe(map(params => params.get('bookId')))
   );
@@ -38,7 +40,9 @@ export class LoanCreate {
     this.loanApi.createLoan(request).subscribe({
       next: loan => {
         this.errorMessage.set('');
-        this.result.set(loan);
+        alert("Created a Loan for user: " + this.loanForm.value);
+        this.created.emit(loan);
+        this.loanForm.reset();
       },
       error: (err: HttpErrorResponse) => {
         this.errorMessage.set(err.error.message);
