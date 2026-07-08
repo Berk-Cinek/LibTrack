@@ -1,6 +1,8 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
+import { Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs';
 
 interface LoginResponse {
   username: string;
@@ -14,6 +16,7 @@ interface LoginRequest {
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+  private router = inject(Router);
   private http = inject(HttpClient);
   private baseUrl = 'http://localhost:8080/auth';
 
@@ -21,6 +24,22 @@ export class AuthService {
   role = signal<string | null>(null);
   checked = signal(false);
   authNotice = signal('');
+
+  constructor() {
+    let skipNext = false;
+
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      if (skipNext) {
+        this.authNotice.set('');
+        skipNext = false;
+      }
+      if (this.authNotice()) {
+        skipNext = true;
+      }
+    });
+  }
 
   isLoggedIn = () => this.username() !== null;
   isAdmin = () => this.role() === 'ADMIN';
