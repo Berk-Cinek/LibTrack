@@ -24,7 +24,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         return User.builder()
                 .username(user.getUsername())
-                .password(user.getPassword())     // the HASH — Spring never sees the raw password here
+                .password(user.getPassword())
                 .roles(user.getRole())
                 .build();
     }

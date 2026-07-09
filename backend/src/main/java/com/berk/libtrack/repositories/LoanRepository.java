@@ -16,7 +16,6 @@ import java.util.List;
 
 @Repository
 public interface LoanRepository extends JpaRepository<LoanEntity, Long>,
-        PagingAndSortingRepository<LoanEntity, Long>,
         JpaSpecificationExecutor<LoanEntity> {
 
     long countByMemberEntityAndStatus(MemberEntity member, LoanStatus status);

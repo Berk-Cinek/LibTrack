@@ -52,9 +52,9 @@ public class JwtServiceImpl implements JwtService {
             Jwts.parser().verifyWith(key).build().parseSignedClaims(token);
             return true;
         } catch (ExpiredJwtException e) {
-            throw e;              //EXPIRED_TOKEN
+            throw e;
         } catch (Exception e) {
-            return false;         //INVALID_TOKEN
+            return false;
         }
     }
 }
