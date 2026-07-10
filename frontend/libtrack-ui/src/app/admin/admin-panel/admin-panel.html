@@ -32,6 +32,7 @@
         <app-member-create />
         <app-member-list
           (editRequested)="onEditMember($event)"
+          (promoteRequested)="onPromoteMember($event)"
           (deleteRequested)="onDeleteMember($event)" />
 
         @if (selectedMember()) {

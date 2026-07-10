@@ -68,6 +68,13 @@ export class AdminPanel {
   onEditMember(member: Member) { this.selectedMember.set(member); }
   onMemberSaved() { this.selectedMember.set(null); this.memberList()?.loadMembers(); }
   onCancelMember() { this.selectedMember.set(null); }
+  onPromoteMember(member: Member) {
+    if (!confirm(`Make "${member.fullName}" an admin? They will have full management access.`)) return;
+    this.authService.promoteToAdmin(member.id).subscribe({
+      next: () => alert(`${member.fullName} is now an admin.`),
+      error: (err: HttpErrorResponse) => alert(err.error?.message ?? 'Promotion failed'),
+    });
+  }
   onDeleteMember(member: Member) {
     if (!confirm(`Delete member "${member.fullName}"? This cannot be undone.`)) return;
     this.memberApi.memberDelete(member.id).subscribe({

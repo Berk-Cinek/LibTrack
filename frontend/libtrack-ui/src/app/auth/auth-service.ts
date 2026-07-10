@@ -70,6 +70,10 @@ export class AuthService {
     return this.http.post<void>(`${this.baseUrl}/register`, request);
   }
 
+  promoteToAdmin(memberId: number): Observable<void> {
+    return this.http.patch<void>(`${this.baseUrl}/members/${memberId}/promote`, {});
+  }
+
   checkSession() {
     this.http.get<LoginResponse>(`${this.baseUrl}/me`, { withCredentials: true }).subscribe({
       next: response => {

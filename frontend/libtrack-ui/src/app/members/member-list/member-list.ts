@@ -22,6 +22,7 @@ export class MemberList implements OnInit {
 
   editRequested = output<Member>();
   deleteRequested = output<Member>();
+  promoteRequested = output<Member>();
 
   ngOnInit() {
     this.loadMembers();

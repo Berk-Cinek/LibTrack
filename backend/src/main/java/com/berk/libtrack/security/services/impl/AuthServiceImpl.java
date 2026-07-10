@@ -76,9 +76,10 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void promoteToAdmin(Long userId) {
-        UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userId));
+    public void promoteToAdmin(Long memberId) {
+        UserEntity user = userRepository.findByMemberEntity_Id(memberId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "This member has no user account to promote."));
         user.setRole("ADMIN");
         userRepository.save(user);
     }

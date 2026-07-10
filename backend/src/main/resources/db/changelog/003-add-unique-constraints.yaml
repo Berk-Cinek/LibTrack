@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 003-add-unique-constraints
+      author: berk
+      changes:
+        - addUniqueConstraint:
+            tableName: books
+            columnNames: isbn
+            constraintName: uq_books_isbn
+        - addUniqueConstraint:
+            tableName: members
+            columnNames: member_no
+            constraintName: uq_members_member_no

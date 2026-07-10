@@ -10,7 +10,7 @@ public interface AuthService {
 
     LoginResponse login(LoginRequest request);
 
-    void promoteToAdmin(Long userId);
+    void promoteToAdmin(Long memberId);
 
     Long getMemberIdForUsername(String username);
 }

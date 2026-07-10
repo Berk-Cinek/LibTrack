@@ -37,6 +37,7 @@
 
         <div class="row-actions">
           <button (click)="editRequested.emit(member)">Edit</button>
+          <button class="promote" (click)="promoteRequested.emit(member)">Promote</button>
           <button class="danger" (click)="deleteRequested.emit(member)">Delete</button>
         </div>
       </li>

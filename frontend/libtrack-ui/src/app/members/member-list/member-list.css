@@ -105,6 +105,13 @@
   background: #8a3d33;
 }
 
+.row-actions .promote {
+  background: var(--sage);
+}
+.row-actions .promote:hover:not(:disabled) {
+  background: #4a5a45;
+}
+
 .pagination {
   display: flex;
   align-items: center;
