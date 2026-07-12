@@ -6,12 +6,5 @@
   <input type="text" formControlName="email" placeholder="Email">
   <input type="checkbox" formControlName="isActive" placeholder="Active">
 
-  <button (click)="createOneMember()" [disabled]="memberForm.invalid"> Submit </button>
+  <button (click)="onCreateMember()" [disabled]="memberForm.invalid"> Submit </button>
 </form>
-
-@if (member()) {
-  <li> {{ member()!.fullName }} No: {{ member()!.memberNo }} <br>
-    Email:{{ member()!.email }}, Active Member:{{ member()!.isActive }} <br>
-    Created at: {{ member()!.createdAt }}
-  </li>
-}

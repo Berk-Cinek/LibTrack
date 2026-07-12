@@ -32,7 +32,7 @@ public class AdminSeedConfig {
             UserEntity adminUser = UserEntity.builder()
                     .memberEntity(adminMember)
                     .username("admin")
-                    .password(passwordEncoder.encode("1"))
+                    .password(passwordEncoder.encode("changeme"))
                     .role("ADMIN")
                     .build();
             userRepository.save(adminUser);

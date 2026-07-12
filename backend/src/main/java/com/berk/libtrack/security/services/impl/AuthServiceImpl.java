@@ -62,7 +62,7 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() -> new AuthorizationFailedException("Invalid username or password"));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid username or password");
+            throw new AuthorizationFailedException("Invalid username or password");
         }
 
         String token = jwtService.generateToken(user.getUsername());

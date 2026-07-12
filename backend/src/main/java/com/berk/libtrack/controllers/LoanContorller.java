@@ -2,6 +2,7 @@ package com.berk.libtrack.controllers;
 
 import com.berk.libtrack.domain.dto.LoanDto;
 import com.berk.libtrack.domain.entities.LoanEntity;
+import com.berk.libtrack.exceptions.AuthorizationFailedException;
 import com.berk.libtrack.exceptions.ResourceNotFoundException;
 import com.berk.libtrack.mappers.LoanMapper;
 import com.berk.libtrack.security.services.AuthService;

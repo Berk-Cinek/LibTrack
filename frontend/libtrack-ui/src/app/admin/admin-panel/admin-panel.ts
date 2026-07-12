@@ -65,6 +65,9 @@ export class AdminPanel {
   selectedMember = signal<Member | null>(null);
   memberList = viewChild(MemberList);
 
+  onMemberCreated() {
+    this.memberList()?.loadMembers();   // is this handler here?
+  }
   onEditMember(member: Member) { this.selectedMember.set(member); }
   onMemberSaved() { this.selectedMember.set(null); this.memberList()?.loadMembers(); }
   onCancelMember() { this.selectedMember.set(null); }
@@ -89,13 +92,13 @@ export class AdminPanel {
   onEditLoan(loan: Loan) { this.selectedLoan.set(loan); }
   onLoanSaved() {
     this.selectedLoan.set(null);
-    this.loanList()?.fetchPage(this.loanList()!.currentPage());
+    this.loanList()?.refresh();
   }
   onCancelLoan() { this.selectedLoan.set(null); }
   onDeleteLoan(loan: Loan) {
     if (!confirm(`Delete this loan of "${loan.bookDto.title}"? This cannot be undone.`)) return;
     this.loanApi.deleteLoan(loan.id).subscribe({
-      next: () => this.loanList()?.fetchPage(this.loanList()!.currentPage()),
+      next: () => this.loanList()?.refresh(),
       error: err => alert(err.error?.message ?? 'Delete failed'),
     });
   }

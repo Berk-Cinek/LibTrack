@@ -63,7 +63,7 @@ the database is initialized and Liquibase creates all tables automatically.
 ## Default admin account 
 
 - username; admin
-- password; 1
+- password; changeme
 
 ## Stopping the system 
 ```bash

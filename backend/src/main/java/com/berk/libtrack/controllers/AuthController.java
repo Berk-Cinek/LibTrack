@@ -64,7 +64,7 @@ public class AuthController {
     }
 
     @Operation(summary = "Promote to admin", description = "Promote a user to admin, requires admin privileges")
-    @PatchMapping("/users/{memberId}/promote")
+    @PatchMapping("/members/{memberId}/promote")
     public ResponseEntity<Void> promoteToAdmin(@PathVariable Long memberId) {
         authService.promoteToAdmin(memberId);
         return ResponseEntity.noContent().build();

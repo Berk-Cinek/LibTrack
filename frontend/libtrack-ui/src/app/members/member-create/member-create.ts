@@ -1,5 +1,6 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from  '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 import { formToMember } from '../member-mapper';
 import { MemberApi } from '../member-api';
 import { Member } from  '../member';
@@ -15,6 +16,8 @@ export class MemberCreate {
   private formBuilder = inject(FormBuilder);
   member = signal<Member | null>(null);
 
+  created = output<Member>();
+
   memberForm = this.formBuilder.group({
     memberNo: ['', Validators.required],
     fullName: ['', Validators.required],
@@ -22,17 +25,16 @@ export class MemberCreate {
     isActive: [false],
   })
 
-  createOneMember(){
-    const created = formToMember(this.memberForm.value);
-    this.memberApi.createMember(created).subscribe({
-      next: createdMember => {
-        console.log(createdMember);
-        alert("Member Created")
-        this.member.set(createdMember)
+  onCreateMember() {
+    const request = formToMember(this.memberForm.value);
+    this.memberApi.createMember(request).subscribe({
+      next: member => {
+        this.created.emit(member);
+        this.memberForm.reset();
       },
-      error: () =>{
-        alert("Creation Failed - Please try again")
+      error: (err: HttpErrorResponse) => {
+        alert(err.error?.message ?? 'Create failed');
       },
-    })
+    });
   }
 }

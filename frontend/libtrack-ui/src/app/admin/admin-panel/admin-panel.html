@@ -29,7 +29,7 @@
       }
 
       @case ('members') {
-        <app-member-create />
+        <app-member-create (created)="onMemberCreated()"/>
         <app-member-list
           (editRequested)="onEditMember($event)"
           (promoteRequested)="onPromoteMember($event)"

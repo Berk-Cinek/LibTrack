@@ -20,7 +20,7 @@ public class LoanMapper implements Mapper<LoanEntity, LoanDto> {
     public LoanDto mapTo(LoanEntity loanEntity) {
         return LoanDto.builder()
                 .id(loanEntity.getId())
-                .memberId(loanEntity.getMemberEntity().getId())
+                .memberId(loanEntity.getMemberEntity().getMemberNo())
                 .bookDto(bookMapper.mapTo(loanEntity.getBookEntity()))
                 .borrowedAt(loanEntity.getBorrowedAt())
                 .dueDate(loanEntity.getDueDate())

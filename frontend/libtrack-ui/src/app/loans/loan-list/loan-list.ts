@@ -40,6 +40,10 @@ export class LoanList {
     });
   }
 
+  refresh() {
+    this.fetchPage(this.currentPage());
+  }
+
   nextPage() {
     if (this.currentPage() + 1 < this.totalPages()) {
       this.fetchPage(this.currentPage() + 1);
