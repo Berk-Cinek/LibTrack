@@ -20,15 +20,43 @@ class BookRepositoryTest {
     @Autowired
     private BookRepository bookRepository;
 
+    private long nextIsbn = 1000L;
+
     @Test
-    void search_matchesPartialCaseInsensitive_acrossTitleAuthorGenre() {
+    void search_matchesByTitle_partialAndCaseInsensitive() {
         bookRepository.save(book("The Myth of Sisyphus", "Albert Camus", "philosophy"));
         bookRepository.save(book("Roadside Picnic", "Arkady Strugatsky", "sci-fi"));
         bookRepository.save(book("The Iliad", "Homer", "epic"));
 
-        assertThat(search("myth").getContent()).hasSize(1);
-        assertThat(search("CAMUS").getContent()).hasSize(1);
-        assertThat(search("sci").getContent()).hasSize(1);
+        assertThat(search("myth").getContent())
+                .extracting(BookEntity::getTitle)
+                .containsExactly("The Myth of Sisyphus");
+    }
+
+    @Test
+    void search_matchesByAuthor_caseInsensitive() {
+        bookRepository.save(book("The Myth of Sisyphus", "Albert Camus", "philosophy"));
+        bookRepository.save(book("The Iliad", "Homer", "epic"));
+
+        assertThat(search("CAMUS").getContent())
+                .extracting(BookEntity::getAuthor)
+                .containsExactly("Albert Camus");
+    }
+
+    @Test
+    void search_matchesByGenre_partial() {
+        bookRepository.save(book("Roadside Picnic", "Arkady Strugatsky", "sci-fi"));
+        bookRepository.save(book("The Iliad", "Homer", "epic"));
+
+        assertThat(search("sci").getContent())
+                .extracting(BookEntity::getGenre)
+                .containsExactly("sci-fi");
+    }
+
+    @Test
+    void search_returnsEmpty_whenNothingMatches() {
+        bookRepository.save(book("The Iliad", "Homer", "epic"));
+
         assertThat(search("zzz").getContent()).isEmpty();
     }
 
@@ -40,7 +68,7 @@ class BookRepositoryTest {
 
     private BookEntity book(String title, String author, String genre) {
         BookEntity book = new BookEntity();
-        book.setIsbn((long) title.hashCode());
+        book.setIsbn(nextIsbn++);
         book.setTitle(title);
         book.setAuthor(author);
         book.setGenre(genre);

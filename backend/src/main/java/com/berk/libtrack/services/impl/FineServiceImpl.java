@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -83,18 +84,18 @@ public class FineServiceImpl implements FineService {
     }
 
     @Scheduled(cron = "0 0 0 * * *")
+    @Transactional
     public void updateFine(){
         var due = fineRepository.findByLoanEntityStatus(LoanStatus.OVERDUE);
 
         for(FineEntity fine: due){
             if (Boolean.TRUE.equals(fine.getIsPaid())) continue;
 
-            Integer daysOverdue =Math.toIntExact(
-                    ChronoUnit.DAYS.between(fine.getLoanEntity().getDueDate(), LocalDate.now()));
+            Integer daysOverdue = Math.toIntExact(
+                    ChronoUnit.DAYS.between(fine.getLoanEntity().getDueDate().toLocalDate(), LocalDate.now()));
 
             fine.setDaysOverdue(fine.getDaysOverdue() + 1);
             fine.setAmount(daysOverdue * OVERDUE_FEE);
-
         }
     }
 }

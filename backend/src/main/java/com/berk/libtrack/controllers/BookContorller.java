@@ -31,18 +31,9 @@ public class BookContorller {
 
     @Operation(summary = "Create a Book", description = "Adds a new book to the catalog." +
             " Fields: isbn, title, author, genre, totalCopies, availableCopies.")
-    /*
-    @ApiResponses({
-    @ApiResponse(responseCode = "201", description = "Loan created"),
-    @ApiResponse(responseCode = "409", description = "Loan limit, unpaid fine, already has this book, or out of stock"),
-    @ApiResponse(responseCode = "404", description = "Member or book not found")
-    })
-     */
-
     @PostMapping(path = "/books")
     public ResponseEntity<BookDto> createBook(@RequestBody BookDto  book){
-        BookEntity bookEntity = bookMapper.mapFrom(book);
-        BookEntity savedBookEntity = bookService.save(bookEntity);
+        BookEntity savedBookEntity = bookService.save(bookMapper.mapFrom(book));
         return new ResponseEntity<>(bookMapper.mapTo(savedBookEntity),HttpStatus.CREATED);
     }
 
@@ -62,7 +53,7 @@ public class BookContorller {
 
     @Operation(summary = "Get one Book", description = "Get one Book based on id match")
     @GetMapping(path = "/books/{id}")
-    public ResponseEntity<BookDto> getById(@PathVariable("id") Long id){
+    public ResponseEntity getById(@PathVariable("id") Long id){
         if (!bookService.isExists(id)) {
             throw new ResourceNotFoundException("Book with id:" + id + "not found for getById");
         }

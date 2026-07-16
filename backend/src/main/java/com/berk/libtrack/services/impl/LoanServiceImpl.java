@@ -192,12 +192,13 @@ public class LoanServiceImpl implements LoanService {
     }
 
     @Scheduled(cron = "0 0 0 1 * *")
+    @Transactional
     public void markOverdueAndFine(){
         var due = loanRepository.findByStatusAndDueDateBefore(LoanStatus.ACTIVE, LocalDateTime.now());
 
         for(LoanEntity loan :  due){
             loan.setStatus(LoanStatus.OVERDUE);
-            Integer daysLate = Math.toIntExact(ChronoUnit.DAYS.between(loan.getDueDate(), LocalDate.now()));
+            Integer daysLate = Math.toIntExact(ChronoUnit.DAYS.between(loan.getDueDate().toLocalDate(), LocalDate.now()));
 
             FineEntity fine = FineEntity.builder()
                     .loanEntity(loan)

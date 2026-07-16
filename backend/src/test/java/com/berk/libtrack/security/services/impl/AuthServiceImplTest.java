@@ -1,6 +1,7 @@
 package com.berk.libtrack.security.services.impl;
 
 import com.berk.libtrack.domain.dto.LoginRequest;
+import com.berk.libtrack.domain.dto.LoginResponse;
 import com.berk.libtrack.domain.dto.RegisterRequest;
 import com.berk.libtrack.domain.entities.MemberEntity;
 import com.berk.libtrack.domain.entities.UserEntity;
@@ -9,26 +10,23 @@ import com.berk.libtrack.exceptions.DataIntegrityException;
 import com.berk.libtrack.exceptions.ResourceNotFoundException;
 import com.berk.libtrack.repositories.MemberRepository;
 import com.berk.libtrack.repositories.UserRepository;
-import com.berk.libtrack.security.services.AuthService;
 import com.berk.libtrack.security.services.JwtService;
-import liquibase.license.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 
 @ExtendWith(MockitoExtension.class)
 class AuthServiceImplTest {
@@ -45,8 +43,8 @@ class AuthServiceImplTest {
     @Mock
     private JwtService jwtService;
 
-    @Mock
-    private AuthService authService;
+    @InjectMocks
+    private AuthServiceImpl authService;
 
     @Test
     void register_rejectsTakenUsername() {
@@ -66,7 +64,7 @@ class AuthServiceImplTest {
     }
 
     @Test
-    void register_rejectsMembersWithExistingAccount(){
+    void register_rejectsMembersWithExistingAccount() {
         RegisterRequest request = RegisterRequest.builder()
                 .memberNo(6161L)
                 .username("berk")
@@ -89,7 +87,7 @@ class AuthServiceImplTest {
     }
 
     @Test
-    void register_rejectsUnknownMemberNo(){
+    void register_rejectsUnknownMemberNo() {
         RegisterRequest request = RegisterRequest.builder()
                 .memberNo(6161L)
                 .username("berk")
@@ -98,17 +96,16 @@ class AuthServiceImplTest {
 
         when(userRepository.existsByUsername("berk")).thenReturn(false);
         when(memberRepository.findByMemberNo(6161L)).thenReturn(Optional.empty());
-        when(userRepository.existsByMemberEntity_Id(4L)).thenReturn(true);
 
         assertThatThrownBy(() -> authService.register(request))
                 .isInstanceOf(ResourceNotFoundException.class)
-                .hasMessageContaining("No member Found");
+                .hasMessageContaining("member number");
 
         verify(userRepository, never()).save(any());
     }
 
     @Test
-    void register_hashedPasswordAndAssignsMemberRole(){
+    void register_hashedPasswordAndAssignsMemberRole() {
         RegisterRequest request = RegisterRequest.builder()
                 .memberNo(6161L)
                 .username("newuser")
@@ -127,7 +124,7 @@ class AuthServiceImplTest {
         authService.register(request);
 
         ArgumentCaptor<UserEntity> captor = ArgumentCaptor.forClass(UserEntity.class);
-        verify(userRepository).save(captor.getValue());
+        verify(userRepository).save(captor.capture());
 
         UserEntity saved = captor.getValue();
         assertThat(saved.getPassword()).isEqualTo("HASHED_VALUE");
@@ -137,7 +134,50 @@ class AuthServiceImplTest {
     }
 
     @Test
-    void login_rejectsWrongPassword(){
+    void login_success() {
+        LoginRequest loginRequest = LoginRequest.builder()
+                .username("berk")
+                .password("secret")
+                .build();
+
+        MemberEntity member = new MemberEntity();
+        member.setId(4L);
+
+        UserEntity user = UserEntity.builder()
+                .username("berk")
+                .password("HASHED_PASSWORD")
+                .role("MEMBER")
+                .memberEntity(member)
+                .build();
+
+        when(userRepository.findByUsername("berk")).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches("secret", "HASHED_PASSWORD")).thenReturn(true);
+        when(jwtService.generateToken("berk")).thenReturn("valid.jwt.token");
+
+        LoginResponse response = authService.login(loginRequest);
+
+        assertThat(response.getToken()).isEqualTo("valid.jwt.token");
+        assertThat(response.getMemberId()).isEqualTo(4L);
+        assertThat(response.getUsername()).isEqualTo("berk");
+        assertThat(response.getRole()).isEqualTo("MEMBER");
+    }
+
+    @Test
+    void login_rejectsUnknownUsername() {
+        LoginRequest loginRequest = LoginRequest.builder()
+                .username("unknown")
+                .password("secret")
+                .build();
+
+        when(userRepository.findByUsername("unknown")).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> authService.login(loginRequest))
+                .isInstanceOf(AuthorizationFailedException.class)
+                .hasMessageContaining("Invalid username or password");
+    }
+
+    @Test
+    void login_rejectsWrongPassword() {
         LoginRequest loginRequest = LoginRequest.builder()
                 .username("berk")
                 .password("wrong-password")
@@ -156,5 +196,56 @@ class AuthServiceImplTest {
                 .hasMessageContaining("Invalid username or password");
 
         verify(jwtService, never()).generateToken(any());
+    }
+
+    @Test
+    void promoteToAdmin_success() {
+        UserEntity user = UserEntity.builder()
+                .role("MEMBER")
+                .build();
+
+        when(userRepository.findByMemberEntity_Id(4L)).thenReturn(Optional.of(user));
+
+        authService.promoteToAdmin(4L);
+
+        assertThat(user.getRole()).isEqualTo("ADMIN");
+        verify(userRepository).save(user);
+    }
+
+    @Test
+    void promoteToAdmin_rejectsUnknownMember() {
+        when(userRepository.findByMemberEntity_Id(99L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> authService.promoteToAdmin(99L))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessageContaining("no user account to promote");
+
+        verify(userRepository, never()).save(any());
+    }
+
+    @Test
+    void getMemberIdForUsername_success() {
+        MemberEntity member = new MemberEntity();
+        member.setId(4L);
+
+        UserEntity user = UserEntity.builder()
+                .username("berk")
+                .memberEntity(member)
+                .build();
+
+        when(userRepository.findByUsername("berk")).thenReturn(Optional.of(user));
+
+        Long memberId = authService.getMemberIdForUsername("berk");
+
+        assertThat(memberId).isEqualTo(4L);
+    }
+
+    @Test
+    void getMemberIdForUsername_rejectsUnknownUser() {
+        when(userRepository.findByUsername("unknown")).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> authService.getMemberIdForUsername("unknown"))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessageContaining("User not found");
     }
 }

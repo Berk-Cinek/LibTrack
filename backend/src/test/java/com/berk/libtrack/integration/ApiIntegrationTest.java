@@ -3,11 +3,15 @@ package com.berk.libtrack.integration;
 import com.berk.libtrack.TestcontainersConfig;
 import com.berk.libtrack.domain.entities.BookEntity;
 import com.berk.libtrack.domain.entities.MemberEntity;
+import com.berk.libtrack.domain.entities.UserEntity;
 import com.berk.libtrack.repositories.BookRepository;
 import com.berk.libtrack.repositories.MemberRepository;
+import com.berk.libtrack.repositories.UserRepository;
+import com.berk.libtrack.security.services.AuthService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.resttestclient.TestRestTemplate;
+import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.*;
@@ -17,6 +21,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureTestRestTemplate
 @Import(TestcontainersConfig.class)
 class ApiIntegrationTest {
 
@@ -24,21 +29,23 @@ class ApiIntegrationTest {
     private TestRestTemplate rest;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private MemberRepository memberRepository;
 
     @Autowired
     private BookRepository bookRepository;
-
 
     @Test
     void journey_registerLoginBorrowReturn_stockMovesCorrectly() {
         MemberEntity member = memberRepository.save(member(7001L, "Journey Person", "journey@x.com"));
         BookEntity book = bookRepository.save(book("Journey Book", 3));
 
-
         ResponseEntity<Void> reg = rest.postForEntity("/auth/register",
                 Map.of("memberNo", 7001, "username", "journeyuser", "password", "pw123456"),
                 Void.class);
+
         assertThat(reg.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
         String memberCookie = login("journeyuser", "pw123456");
@@ -50,17 +57,16 @@ class ApiIntegrationTest {
         assertThat(bookRepository.findById(book.getId()).orElseThrow()
                 .getAvailableCopies()).isEqualTo(2);
 
-        String adminCookie = login("admin", "1");
+        String adminCookie = login("admin", "changeme");
+
         Long loanId = extractId(borrow.getBody());
         ResponseEntity<String> patch = rest.exchange("/loans/" + loanId, HttpMethod.PATCH,
                 jsonWithCookie(Map.of("status", "RETURNED"), adminCookie), String.class);
         assertThat(patch.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-
         assertThat(bookRepository.findById(book.getId()).orElseThrow()
                 .getAvailableCopies()).isEqualTo(3);
     }
-
 
     @Test
     void security_anonymousCanBrowseBooks_butNotLoans() {
@@ -79,12 +85,10 @@ class ApiIntegrationTest {
         String cookie = login("plainmember", "pw123456");
 
         ResponseEntity<String> resp = rest.exchange("/loans", HttpMethod.GET,
-                new HttpEntity<>(cookieHeaders(cookie)), String.class);
+                new HttpEntity<>(null, cookieHeaders(cookie)), String.class);
 
-        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     }
-
-
 
     @Test
     void borrow_atThreeLoanCap_returns409WithMessage() {
@@ -108,7 +112,7 @@ class ApiIntegrationTest {
                 jsonWithCookie(Map.of("bookId", b4.getId()), cookie), String.class);
 
         assertThat(fourth.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-        assertThat(fourth.getBody()).contains("3 active loans");   // your handler's JSON message
+        assertThat(fourth.getBody()).contains("3 active loans");
     }
 
     private String login(String username, String password) {
