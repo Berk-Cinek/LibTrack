@@ -5,8 +5,7 @@ import { LoanApi } from '../loan-api';
 @Component({
   selector: 'app-loan-delete',
   imports: [],
-  templateUrl: './loan-delete.html',
-  styleUrl: './loan-delete.css',
+  templateUrl: './loan-delete.html'
 })
 export class LoanDelete {
   private loanApi = inject(LoanApi);

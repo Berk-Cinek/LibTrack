@@ -1,17 +1,17 @@
 <input
   #searchBox
   type="text"
-  class="search-input"
+  class="w-full max-w-[420px] py-[0.7rem] px-4 border border-[#d8cfc0] rounded-md text-base bg-white mb-6 focus:outline-2 focus:outline-[var(--spine)] focus:outline-offset-1 focus:border-[var(--spine)]"
   [placeholder]="searchPlaceholder()"
   (input)="onSearchInput(searchBox.value)"
 />
 
 @if (loading()) {
-  <p class="status-line">Loading…</p>
+  <p class="text-[var(--sage)] italic">Loading…</p>
 } @else if (filteredItems().length === 0) {
-  <p class="status-line">{{ emptyMessage() }}</p>
+  <p class="text-[var(--sage)] italic">{{ emptyMessage() }}</p>
 } @else {
-  <div class="result-grid">
+  <div class="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-4">
     @for (item of filteredItems(); track $index) {
       <ng-container
         [ngTemplateOutlet]="itemTemplate()"

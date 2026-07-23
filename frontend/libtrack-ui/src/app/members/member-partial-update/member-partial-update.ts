@@ -8,8 +8,7 @@ import { Member } from '../member';
 @Component({
   selector: 'app-member-partial-update',
   imports: [ReactiveFormsModule],
-  templateUrl: './member-partial-update.html',
-  styleUrl: './member-partial-update.css',
+  templateUrl: './member-partial-update.html'
 })
 export class MemberPartialUpdate {
   private memberApi = inject(MemberApi);

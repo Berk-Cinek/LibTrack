@@ -1,31 +1,31 @@
-<div class="auth-widget">
+<div class="flex flex-col items-end gap-[0.35rem]">
   @if (authService.isLoggedIn()) {
-    <span class="auth-user">
+    <span class="flex items-center gap-2 text-[0.9rem]">
       <strong>{{ authService.username() }}</strong>
-      <span class="auth-role">{{ authService.role() }}</span>
+      <span class="text-[0.7rem] font-semibold uppercase bg-[#eff6ff] text-[#2563eb] py-[0.2rem] px-2 rounded-md">{{ authService.role() }}</span>
     </span>
-    <button (click)="onLogoutClick()">Log out</button>
+    <button class="py-[0.4rem] px-[0.9rem] text-[0.85rem] whitespace-nowrap" (click)="onLogoutClick()">Log out</button>
   } @else {
     @if (!registerMode()) {
-      <form class="auth-form" (ngSubmit)="onLogin()" [formGroup]="loginForm">
-        <input type="text" formControlName="username" placeholder="Username" />
-        <input type="password" formControlName="password" placeholder="Password" />
-        <button type="submit">Log in</button>
-        <button type="button" class="auth-link" (click)="registerMode.set(true)">Register</button>
+      <form class="flex items-center flex-nowrap gap-2 m-0" (ngSubmit)="onLogin()" [formGroup]="loginForm">
+        <input type="text" formControlName="username" placeholder="Username" class="w-[130px] py-[0.4rem] px-[0.6rem] text-[0.85rem] mr-0" />
+        <input type="password" formControlName="password" placeholder="Password" class="w-[130px] py-[0.4rem] px-[0.6rem] text-[0.85rem] mr-0" />
+        <button type="submit" class="py-[0.4rem] px-[0.9rem] text-[0.85rem] whitespace-nowrap">Log in</button>
+        <button type="button" class="bg-none text-white border-none underline py-[0.4rem] px-2 text-[0.85rem]" (click)="registerMode.set(true)">Register</button>
       </form>
     } @else {
-      <form class="auth-form" (ngSubmit)="onRegister()" [formGroup]="registerForm">
-        <input type="number" formControlName="memberNo" placeholder="Member No" />
-        <input type="text" formControlName="username" placeholder="Username" />
-        <input type="password" formControlName="password" placeholder="Password" />
-        <button type="submit">Sign up</button>
-        <button type="button" class="auth-link" (click)="registerMode.set(false)">Back</button>
+      <form class="flex items-center flex-nowrap gap-2 m-0" (ngSubmit)="onRegister()" [formGroup]="registerForm">
+        <input type="number" formControlName="memberNo" placeholder="Member No" class="w-[130px] py-[0.4rem] px-[0.6rem] text-[0.85rem] mr-0" />
+        <input type="text" formControlName="username" placeholder="Username" class="w-[130px] py-[0.4rem] px-[0.6rem] text-[0.85rem] mr-0" />
+        <input type="password" formControlName="password" placeholder="Password" class="w-[130px] py-[0.4rem] px-[0.6rem] text-[0.85rem] mr-0" />
+        <button type="submit" class="py-[0.4rem] px-[0.9rem] text-[0.85rem] whitespace-nowrap">Sign up</button>
+        <button type="button" class="bg-none text-white border-none underline py-[0.4rem] px-2 text-[0.85rem]" (click)="registerMode.set(false)">Back</button>
       </form>
     }
-    @if (loginError()) { <span class="auth-error">{{ loginError() }}</span> }
+    @if (loginError()) { <span class="text-[0.78rem] text-[#dc2626] bg-none p-0">{{ loginError() }}</span> }
 
     @if (authService.authNotice()) {
-      <span class="auth-error">{{ authService.authNotice() }}</span>
+      <span class="text-[0.78rem] text-[#dc2626] bg-none p-0">{{ authService.authNotice() }}</span>
     }
   }
 </div>

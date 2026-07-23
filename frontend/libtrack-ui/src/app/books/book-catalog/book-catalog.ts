@@ -8,8 +8,7 @@ import { BookDetailModal } from './book-detail-modal/book-detail-modal';
 @Component({
   selector: 'app-book-catalog',
   imports: [SearchList, BookCard, BookDetailModal],
-  templateUrl: './book-catalog.html',
-  styleUrl: './book-catalog.css',
+  templateUrl: './book-catalog.html'
 })
 export class BookCatalog implements OnInit {
   private bookApi = inject(BookApi);

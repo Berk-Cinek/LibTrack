@@ -1,12 +1,12 @@
 import { Component, inject, OnInit, signal, output } from '@angular/core';
 import { MemberApi } from '../member-api';
 import { Member } from '../member';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-member-list',
-  imports: [],
-  templateUrl: './member-list.html',
-  styleUrl: './member-list.css',
+  imports: [NgClass],
+  templateUrl: './member-list.html'
 })
 
 export class MemberList implements OnInit {

@@ -1,13 +1,21 @@
-<section class="admin-panel">
+<section>
   <h1>Admin Panel</h1>
 
   @if (authService.isAdmin()) {
 
-    <div class="tab-bar">
-      <button [class.active]="activeTab() === 'books'"   (click)="activeTab.set('books')">Books</button>
-      <button [class.active]="activeTab() === 'members'" (click)="activeTab.set('members')">Members</button>
-      <button [class.active]="activeTab() === 'loans'"   (click)="activeTab.set('loans')">Loans</button>
-      <button [class.active]="activeTab() === 'fines'"   (click)="activeTab.set('fines')">Fines</button>
+    <div class="flex gap-2 border-b-2 border-[var(--border)] mb-6">
+      <button class="bg-none text-[var(--sage)] border-none border-b-[3px] border-b-transparent rounded-none py-[0.6rem] px-5 font-semibold cursor-pointer hover:text-[var(--ink)]"
+              [ngClass]="{ 'text-[var(--spine)] border-b-[var(--spine)]': activeTab() === 'books' }"
+              (click)="activeTab.set('books')">Books</button>
+      <button class="bg-none text-[var(--sage)] border-none border-b-[3px] border-b-transparent rounded-none py-[0.6rem] px-5 font-semibold cursor-pointer hover:text-[var(--ink)]"
+              [ngClass]="{ 'text-[var(--spine)] border-b-[var(--spine)]': activeTab() === 'members' }"
+              (click)="activeTab.set('members')">Members</button>
+      <button class="bg-none text-[var(--sage)] border-none border-b-[3px] border-b-transparent rounded-none py-[0.6rem] px-5 font-semibold cursor-pointer hover:text-[var(--ink)]"
+              [ngClass]="{ 'text-[var(--spine)] border-b-[var(--spine)]': activeTab() === 'loans' }"
+              (click)="activeTab.set('loans')">Loans</button>
+      <button class="bg-none text-[var(--sage)] border-none border-b-[3px] border-b-transparent rounded-none py-[0.6rem] px-5 font-semibold cursor-pointer hover:text-[var(--ink)]"
+              [ngClass]="{ 'text-[var(--spine)] border-b-[var(--spine)]': activeTab() === 'fines' }"
+              (click)="activeTab.set('fines')">Fines</button>
     </div>
 
     @switch (activeTab()) {
@@ -19,10 +27,10 @@
           (deleteRequested)="onDeleteBook($event)" />
 
         @if (selectedBook()) {
-          <div class="modal-backdrop" (click)="onCancelBook()">
-            <div class="modal-content" (click)="$event.stopPropagation()">
+          <div class="fixed inset-0 bg-[rgba(36,32,25,0.45)] flex items-center justify-center z-[100]" (click)="onCancelBook()">
+            <div class="bg-white rounded-lg border-l-[5px] border-l-[var(--spine)] shadow-[0_8px_30px_rgba(0,0,0,0.2)] py-7 px-8 max-w-[520px] w-full" (click)="$event.stopPropagation()">
               <app-book-partial-update [book]="selectedBook()" (saved)="onBookSaved()" />
-              <button class="modal-cancel" (click)="onCancelBook()">Cancel</button>
+              <button class="mt-3 bg-none text-[var(--sage)] border border-[var(--border)] hover:bg-[#ece5d8] hover:text-[var(--ink)]" (click)="onCancelBook()">Cancel</button>
             </div>
           </div>
         }
@@ -36,10 +44,10 @@
           (deleteRequested)="onDeleteMember($event)" />
 
         @if (selectedMember()) {
-          <div class="modal-backdrop" (click)="onCancelMember()">
-            <div class="modal-content" (click)="$event.stopPropagation()">
+          <div class="fixed inset-0 bg-[rgba(36,32,25,0.45)] flex items-center justify-center z-[100]" (click)="onCancelMember()">
+            <div class="bg-white rounded-lg border-l-[5px] border-l-[var(--spine)] shadow-[0_8px_30px_rgba(0,0,0,0.2)] py-7 px-8 max-w-[520px] w-full" (click)="$event.stopPropagation()">
               <app-member-partial-update [member]="selectedMember()" (saved)="onMemberSaved()" />
-              <button class="modal-cancel" (click)="onCancelMember()">Cancel</button>
+              <button class="mt-3 bg-none text-[var(--sage)] border border-[var(--border)] hover:bg-[#ece5d8] hover:text-[var(--ink)]" (click)="onCancelMember()">Cancel</button>
             </div>
           </div>
         }
@@ -52,10 +60,10 @@
           (deleteRequested)="onDeleteLoan($event)" />
 
         @if (selectedLoan()) {
-          <div class="modal-backdrop" (click)="onCancelLoan()">
-            <div class="modal-content" (click)="$event.stopPropagation()">
+          <div class="fixed inset-0 bg-[rgba(36,32,25,0.45)] flex items-center justify-center z-[100]" (click)="onCancelLoan()">
+            <div class="bg-white rounded-lg border-l-[5px] border-l-[var(--spine)] shadow-[0_8px_30px_rgba(0,0,0,0.2)] py-7 px-8 max-w-[520px] w-full" (click)="$event.stopPropagation()">
               <app-loan-partial-update [loan]="selectedLoan()" (saved)="onLoanSaved()" />
-              <button class="modal-cancel" (click)="onCancelLoan()">Cancel</button>
+              <button class="mt-3 bg-none text-[var(--sage)] border border-[var(--border)] hover:bg-[#ece5d8] hover:text-[var(--ink)]" (click)="onCancelLoan()">Cancel</button>
             </div>
           </div>
         }
@@ -67,10 +75,10 @@
           (deleteRequested)="onDeleteFine($event)" />
 
         @if (selectedFine()) {
-          <div class="modal-backdrop" (click)="onCancelFine()">
-            <div class="modal-content" (click)="$event.stopPropagation()">
+          <div class="fixed inset-0 bg-[rgba(36,32,25,0.45)] flex items-center justify-center z-[100]" (click)="onCancelFine()">
+            <div class="bg-white rounded-lg border-l-[5px] border-l-[var(--spine)] shadow-[0_8px_30px_rgba(0,0,0,0.2)] py-7 px-8 max-w-[520px] w-full" (click)="$event.stopPropagation()">
               <app-fine-partial-update [fine]="selectedFine()" (saved)="onFineSaved()" />
-              <button class="modal-cancel" (click)="onCancelFine()">Cancel</button>
+              <button class="mt-3 bg-none text-[var(--sage)] border border-[var(--border)] hover:bg-[#ece5d8] hover:text-[var(--ink)]" (click)="onCancelFine()">Cancel</button>
             </div>
           </div>
         }
@@ -78,6 +86,6 @@
     }
 
   } @else {
-    <p class="status-line">Admin access required.</p>
+    <p class="text-[var(--sage)] italic">Admin access required.</p>
   }
 </section>

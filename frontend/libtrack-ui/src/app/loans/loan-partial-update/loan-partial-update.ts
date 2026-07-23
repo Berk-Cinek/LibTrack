@@ -8,8 +8,7 @@ import { Loan } from '../loan';
 @Component({
   selector: 'app-loan-partial-update',
   imports: [ReactiveFormsModule],
-  templateUrl: './loan-partial-update.html',
-  styleUrl: './loan-partial-update.css',
+  templateUrl: './loan-partial-update.html'
 })
 export class LoanPartialUpdate {
   private loanApi = inject(LoanApi);

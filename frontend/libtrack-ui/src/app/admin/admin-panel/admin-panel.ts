@@ -24,6 +24,7 @@ import { FineList } from '../../fines/fine-list/fine-list';
 import { FinePartialUpdate } from '../../fines/fine-partial-update/fine-partial-update';
 import { Fine } from '../../fines/fine';
 import { FineApi } from '../../fines/fine-api';
+import { NgClass } from '@angular/common';
 
 type AdminTab = 'books' | 'members' | 'loans' | 'fines';
 
@@ -33,10 +34,9 @@ type AdminTab = 'books' | 'members' | 'loans' | 'fines';
     BookCreate, BookPartialUpdate, BookList,
     MemberCreate, MemberPartialUpdate, MemberList,
     LoanCreate, LoanPartialUpdate, LoanList,
-    FinePartialUpdate, FineList,
+    FinePartialUpdate, FineList, NgClass
   ],
-  templateUrl: './admin-panel.html',
-  styleUrl: './admin-panel.css',
+  templateUrl: './admin-panel.html'
 })
 export class AdminPanel {
   authService = inject(AuthService);

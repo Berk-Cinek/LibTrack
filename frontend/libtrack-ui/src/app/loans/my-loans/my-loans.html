@@ -1,31 +1,33 @@
-<section class="my-loans">
+<section>
   <h1>My Loans</h1>
 
   @if (authService.isLoggedIn()) {
     @if (loans().length === 0) {
-      <p class="status-line">You have no loans right now.</p>
+      <p class="text-[var(--sage)] italic">You have no loans right now.</p>
     } @else {
-      <ul class="loan-items">
+      <ul class="list-none p-0 m-0 flex flex-col gap-3">
         @for (loan of loans(); track loan.id) {
-          <li class="loan-item">
-            <div class="loan-header">
+          <li class="bg-white rounded border-l-[5px] border-l-[var(--spine)] shadow-[0_1px_3px_rgba(0,0,0,0.08)] py-4 px-5">
+            <div class="flex items-center justify-between mb-2">
               <div>
-                <div class="loan-book">{{ loan.bookDto.title }}</div>
-                <div class="loan-author">{{ loan.bookDto.author }}</div>
+                <div class="font-[Georgia,'Times_New_Roman',ui-serif,serif] font-semibold text-[1.05rem] text-[var(--ink)]">{{ loan.bookDto.title }}</div>
+                <div class="text-[0.9rem] text-[var(--sage)]">{{ loan.bookDto.author }}</div>
               </div>
-              <span class="loan-status"
-                    [class.status-active]="loan.status === 'ACTIVE'"
-                    [class.status-overdue]="loan.status === 'OVERDUE'"
-                    [class.status-returned]="loan.status === 'RETURNED'">
+              <span class="text-[0.75rem] font-semibold uppercase tracking-[0.03em] py-1 px-[0.6rem] rounded"
+                    [ngClass]="{
+                      'bg-[#eaf0e6] text-[var(--sage)]': loan.status === 'ACTIVE',
+                      'bg-[#fbe9e6] text-[#a14b3f]': loan.status === 'OVERDUE',
+                      'bg-[#ece5d8] text-[#9a9284]': loan.status === 'RETURNED'
+                    }">
                 {{ loan.status }}
               </span>
             </div>
 
-            <div class="loan-dates">
-              <span>Borrowed: <strong>{{ loan.borrowedAt }}</strong></span>
-              <span>Due: <strong>{{ loan.dueDate }}</strong></span>
+            <div class="text-[0.85rem] text-[var(--sage)] flex gap-6">
+              <span>Borrowed: <strong class="text-[var(--ink)] font-semibold">{{ loan.borrowedAt }}</strong></span>
+              <span>Due: <strong class="text-[var(--ink)] font-semibold">{{ loan.dueDate }}</strong></span>
               @if (loan.returnedAt) {
-                <span>Returned: <strong>{{ loan.returnedAt }}</strong></span>
+                <span>Returned: <strong class="text-[var(--ink)] font-semibold">{{ loan.returnedAt }}</strong></span>
               }
             </div>
           </li>
@@ -33,6 +35,6 @@
       </ul>
     }
   } @else {
-    <p class="auth-required">Please log in to see your loans.</p>
+    <p class="text-[var(--sage)] italic bg-[#ece5d8] py-3 px-4 rounded-md inline-block">Please log in to see your loans.</p>
   }
 </section>

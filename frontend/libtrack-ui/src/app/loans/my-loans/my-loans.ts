@@ -2,12 +2,12 @@ import { Component, inject, signal, effect } from '@angular/core';
 import { LoanApi } from '../loan-api';
 import { AuthService } from '../../auth/auth-service';
 import { Loan } from '../loan';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-my-loans',
-  imports: [],
-  templateUrl: './my-loans.html',
-  styleUrl: './my-loans.css',
+  imports: [NgClass],
+  templateUrl: './my-loans.html'
 })
 export class MyLoans {
   private loanApi = inject(LoanApi);

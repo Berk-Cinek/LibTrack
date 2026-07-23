@@ -5,8 +5,7 @@ import { Member } from '../member';
 @Component({
   selector: 'app-member-id',
   imports: [],
-  templateUrl: './member-id.html',
-  styleUrl: './member-id.css',
+  templateUrl: './member-id.html'
 })
 export class MemberId {
   private memberApi = inject(MemberApi);

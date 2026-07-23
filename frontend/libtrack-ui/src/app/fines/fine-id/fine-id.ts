@@ -5,8 +5,7 @@ import { Fine } from '../fine';
 @Component({
   selector: 'app-fine-id',
   imports: [],
-  templateUrl: './fine-id.html',
-  styleUrl: './fine-id.css',
+  templateUrl: './fine-id.html'
 })
 export class FineId {
   private fineApi = inject(FineApi);

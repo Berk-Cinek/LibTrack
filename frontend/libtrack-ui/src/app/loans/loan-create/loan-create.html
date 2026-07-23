@@ -1,51 +1,53 @@
-<section class="loan-create">
-  <header class="loan-create-header">
-    <h1>Create a Loan</h1>
-    <p class="subtitle">Assign a book to a member.</p>
+<section class="max-w-[480px]">
+  <header class="mb-8">
+    <h1 class="font-[Georgia,'Times_New_Roman',ui-serif,serif] text-[2rem] font-semibold text-[var(--ink)] m-0 mb-1">Create a Loan</h1>
+    <p class="text-[var(--sage)] text-[0.95rem] m-0">Assign a book to a member.</p>
   </header>
 
   @if (authService.isLoggedIn()) {
-    <form [formGroup]="loanForm" (ngSubmit)="createOneLoan()" class="loan-form">
-      <label class="form-field">
-        <span class="form-label">Member ID</span>
+    <form [formGroup]="loanForm" (ngSubmit)="createOneLoan()" class="flex flex-col gap-5">
+      <label class="flex flex-col gap-[0.4rem]">
+        <span class="text-[0.85rem] font-semibold text-[var(--ink)]">Member ID</span>
         <input
           type="text"
           formControlName="memberId"
-          class="form-input"
+          class="py-[0.7rem] px-4 border border-[#d8cfc0] rounded-md text-base bg-white text-[var(--ink)] focus:outline-2 focus:outline-[var(--spine)] focus:outline-offset-1 focus:border-[var(--spine)] disabled:bg-[#ece5d8] disabled:text-[var(--sage)] disabled:cursor-not-allowed"
           placeholder="Enter member ID…"
         />
         @if (loanForm.controls.memberId.invalid && loanForm.controls.memberId.touched) {
-    <span class="field-error">Member ID is required.</span>
-    }
-    </label>
+          <span class="text-[0.8rem] text-[#a14b3f]">Member ID is required.</span>
+        }
+      </label>
 
-    <label class="form-field">
-      <span class="form-label">Book ID</span>
-      <input
-        type="text"
-        formControlName="bookId"
-        class="form-input"
-        placeholder="Enter book ID…"
-      />
-      @if (loanForm.controls.bookId.invalid && loanForm.controls.bookId.touched) {
-    <span class="field-error">Book ID is required.</span>
-    }
-    </label>
+      <label class="flex flex-col gap-[0.4rem]">
+        <span class="text-[0.85rem] font-semibold text-[var(--ink)]">Book ID</span>
+        <input
+          type="text"
+          formControlName="bookId"
+          class="py-[0.7rem] px-4 border border-[#d8cfc0] rounded-md text-base bg-white text-[var(--ink)] focus:outline-2 focus:outline-[var(--spine)] focus:outline-offset-1 focus:border-[var(--spine)] disabled:bg-[#ece5d8] disabled:text-[var(--sage)] disabled:cursor-not-allowed"
+          placeholder="Enter book ID…"
+        />
+        @if (loanForm.controls.bookId.invalid && loanForm.controls.bookId.touched) {
+          <span class="text-[0.8rem] text-[#a14b3f]">Book ID is required.</span>
+        }
+      </label>
 
-    <button type="submit" class="submit-btn" [disabled]="loanForm.invalid">
-      Create Loan
-    </button>
-  </form>
+      <button type="submit"
+              class="self-start py-[0.7rem] px-6 mt-2 hover:opacity-90 disabled:bg-[#d8cfc0] disabled:text-[var(--sage)] disabled:cursor-not-allowed"
+              [disabled]="loanForm.invalid">
+        Create Loan
+      </button>
+    </form>
   } @else {
     <p class="auth-required">Please log in to borrow a book.</p>
   }
 
   @if (errorMessage()) {
-    <p class="status-message status-error">{{ errorMessage() }}</p>
+    <p class="mt-6 py-[0.85rem] px-4 rounded-md text-[0.9rem] bg-[#fbe9e6] text-[#a14b3f] border-l-4 border-l-[#a14b3f]">{{ errorMessage() }}</p>
   }
 
   @if (result(); as loan) {
-    <p class="status-message status-success">
+    <p class="mt-6 py-[0.85rem] px-4 rounded-md text-[0.9rem] bg-[#eaf0e6] text-[var(--sage)] border-l-4 border-l-[var(--sage)]">
       Loan created — book {{ loan.bookDto.title }} assigned to member {{ loan.memberId }}.
     </p>
   }

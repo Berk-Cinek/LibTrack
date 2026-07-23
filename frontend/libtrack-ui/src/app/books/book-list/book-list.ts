@@ -5,8 +5,7 @@ import { Book } from '../book';
 @Component({
   selector: 'app-book-list',
   imports: [],
-  templateUrl: './book-list.html',
-  styleUrl: './book-list.css',
+  templateUrl: './book-list.html'
 })
 export class BookList implements OnInit {
   private bookApi = inject(BookApi);

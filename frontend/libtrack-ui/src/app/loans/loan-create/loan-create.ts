@@ -12,8 +12,7 @@ import { Loan } from '../loan';
 @Component({
   selector: 'app-loan-create',
   imports: [ReactiveFormsModule],
-  templateUrl: './loan-create.html',
-  styleUrl: './loan-create.css',
+  templateUrl: './loan-create.html'
 })
 export class LoanCreate {
   private loanApi = inject(LoanApi);

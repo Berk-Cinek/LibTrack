@@ -8,8 +8,7 @@ import { Book } from '../book';
 @Component({
   selector: 'app-book-partial-update',
   imports: [ReactiveFormsModule],
-  templateUrl: './book-partial-update.html',
-  styleUrl: './book-partial-update.css',
+  templateUrl: './book-partial-update.html'
 })
 export class BookPartialUpdate {
   private bookApi = inject(BookApi);

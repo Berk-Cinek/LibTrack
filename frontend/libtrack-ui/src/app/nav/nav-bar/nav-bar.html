@@ -1,31 +1,31 @@
-<nav>
-  <details #booksMenu
+<nav class="flex items-center justify-between gap-4 bg-white py-3 px-6 rounded-lg mb-6 shadow-[0_1px_3px_rgba(0,0,0,0.08)] relative">
+  <details #booksMenu class="relative"
            (mouseleave)="scheduleClose(booksMenu)"
            (mouseenter)="cancelClose(booksMenu)">
-    <summary>Books</summary>
-    <ul>
-      <li><a routerLink="/bookCatalog">Book Catalog</a></li>
+    <summary class="cursor-pointer font-semibold list-none py-1 px-2 [&::-webkit-details-marker]:hidden">Books</summary>
+    <ul class="absolute top-full left-0 bg-white border border-[#e0e0e0] rounded-lg shadow-[0_4px_12px_rgba(0,0,0,0.1)] p-2 min-w-40 z-10">
+      <li class="bg-transparent border-none py-[0.4rem] px-2 m-0"><a class="text-blue-600 no-underline py-1 block hover:underline" routerLink="/bookCatalog">Book Catalog</a></li>
     </ul>
   </details>
 
-  <details #loansMenu
+  <details #loansMenu class="relative"
            (mouseleave)="scheduleClose(loansMenu)"
            (mouseenter)="cancelClose(loansMenu)">
-    <summary>Loans</summary>
-    <ul>
-      <li><a routerLink="/myLoans"> My Loans </a></li>
+    <summary class="cursor-pointer font-semibold list-none py-1 px-2 [&::-webkit-details-marker]:hidden">Loans</summary>
+    <ul class="absolute top-full left-0 bg-white border border-[#e0e0e0] rounded-lg shadow-[0_4px_12px_rgba(0,0,0,0.1)] p-2 min-w-40 z-10">
+      <li class="bg-transparent border-none py-[0.4rem] px-2 m-0"><a class="text-blue-600 no-underline py-1 block hover:underline" routerLink="/myLoans"> My Loans </a></li>
     </ul>
   </details>
 
   @if(authService.isAdmin()){
-  <details #adminMenu
-           (mouseleave)="scheduleClose(adminMenu)"
-           (mouseenter)="cancelClose(adminMenu)">
-    <summary>Admin Menu</summary>
-    <ul>
-      <li><a routerLink="/adminPanel"> Admin Panel </a></li>
-    </ul>
-  </details>
+    <details #adminMenu class="relative"
+             (mouseleave)="scheduleClose(adminMenu)"
+             (mouseenter)="cancelClose(adminMenu)">
+      <summary class="cursor-pointer font-semibold list-none py-1 px-2 [&::-webkit-details-marker]:hidden">Admin Menu</summary>
+      <ul class="absolute top-full left-0 bg-white border border-[#e0e0e0] rounded-lg shadow-[0_4px_12px_rgba(0,0,0,0.1)] p-2 min-w-40 z-10">
+        <li class="bg-transparent border-none py-[0.4rem] px-2 m-0"><a class="text-blue-600 no-underline py-1 block hover:underline" routerLink="/adminPanel"> Admin Panel </a></li>
+      </ul>
+    </details>
   }
 
   <app-login-widget />

@@ -1,10 +1,11 @@
-<div class="list-controls">
+<div class="flex justify-between items-center gap-4 mb-5">
   <input #searchBox type="text" placeholder="Search by book title…"
+         class="flex-1 max-w-[320px] mr-0"
          (input)="onSearchInput(searchBox.value)"/>
 
-  <label class="page-size-select">
+  <label class="flex items-center gap-2 text-[0.85rem] text-[var(--sage)] whitespace-nowrap">
     Per page
-    <select #sizeBox (change)="onSizeChange(sizeBox.value)">
+    <select #sizeBox class="mr-0" (change)="onSizeChange(sizeBox.value)">
       <option value="10">10</option>
       <option value="20" selected>20</option>
       <option value="50">50</option>
@@ -21,35 +22,38 @@
     }
   </p>
 } @else {
-  <ul class="admin-rows">
+  <ul class="flex flex-col gap-3 mb-5">
     @for (fine of fines(); track fine.id) {
-      <li class="admin-row">
-        <div class="row-main">
-          <span class="row-title">{{ fine.loanDto.bookDto.title }}</span>
-          <span class="row-sub">
+      <li class="flex items-center gap-5 py-[0.9rem] px-5 mb-0">
+        <div class="flex-1 flex flex-col gap-[0.1rem] min-w-0">
+          <span class="font-[Georgia,'Times_New_Roman',ui-serif,serif] font-semibold text-[var(--ink)] whitespace-nowrap overflow-hidden text-ellipsis">{{ fine.loanDto.bookDto.title }}</span>
+          <span class="text-[0.82rem] text-[var(--sage)]">
             Member #{{ fine.loanDto.memberId }} — {{ fine.daysOverdue }} days overdue
           </span>
         </div>
 
-        <span class="row-amount">{{ fine.amount }}</span>
+        <span class="font-semibold text-[var(--ink)] flex-shrink-0 w-[60px] text-right">{{ fine.amount }}</span>
 
-        <span class="fine-status"
-              [class.status-paid]="fine.isPaid"
-              [class.status-unpaid]="!fine.isPaid">
+        <span class="text-[0.72rem] font-semibold uppercase tracking-[0.03em] py-1 px-[0.6rem] rounded flex-shrink-0"
+              [ngClass]="fine.isPaid
+                ? 'bg-[#eaf0e6] text-[var(--sage)]'
+                : 'bg-[#fbe9e6] text-[#a14b3f]'">
           {{ fine.isPaid ? 'PAID' : 'UNPAID' }}
         </span>
 
-        <div class="row-actions">
-          <button (click)="editRequested.emit(fine)">Edit</button>
-          <button class="danger" (click)="deleteRequested.emit(fine)">Delete</button>
+        <div class="flex gap-2 flex-shrink-0">
+          <button class="py-[0.35rem] px-[0.85rem] text-[0.82rem]"
+                  (click)="editRequested.emit(fine)">Edit</button>
+          <button class="py-[0.35rem] px-[0.85rem] text-[0.82rem] bg-[#a14b3f] hover:bg-[#8a3d33]"
+                  (click)="deleteRequested.emit(fine)">Delete</button>
         </div>
       </li>
     }
   </ul>
 }
 
-<div class="pagination">
+<div class="flex items-center gap-4">
   <button (click)="prevPage()" [disabled]="first()">Previous</button>
-  <span class="page-indicator">Page {{ page() + 1 }} of {{ totalPages() }}</span>
+  <span class="text-[0.9rem] text-[var(--ink)]">Page {{ page() + 1 }} of {{ totalPages() }}</span>
   <button (click)="nextPage()" [disabled]="last()">Next</button>
 </div>

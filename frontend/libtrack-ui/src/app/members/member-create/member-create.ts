@@ -8,8 +8,7 @@ import { Member } from  '../member';
 @Component({
   selector: 'app-member-create',
   imports: [ReactiveFormsModule],
-  templateUrl: './member-create.html',
-  styleUrl: './member-create.css',
+  templateUrl: './member-create.html'
 })
 export class MemberCreate {
   private memberApi = inject(MemberApi);

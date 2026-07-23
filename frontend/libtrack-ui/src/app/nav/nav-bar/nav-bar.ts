@@ -6,8 +6,7 @@ import { LoginWidget } from '../../auth/login-widget/login-widget';
 @Component({
   selector: 'app-nav-bar',
   imports: [RouterLink, LoginWidget],
-  templateUrl: './nav-bar.html',
-  styleUrl: './nav-bar.css',
+  templateUrl: './nav-bar.html'
 })
 export class NavBar {
   private elementRef = inject(ElementRef);

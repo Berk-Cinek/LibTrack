@@ -5,8 +5,7 @@ import { Member } from '../member';
 @Component({
   selector: 'app-member-delete',
   imports: [],
-  templateUrl: './member-delete.html',
-  styleUrl: './member-delete.css',
+  templateUrl: './member-delete.html'
 })
 export class MemberDelete {
   private memberApi = inject(MemberApi);

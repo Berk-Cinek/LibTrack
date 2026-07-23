@@ -1,16 +1,16 @@
-<section class="loan-list">
-  <div class="list-controls">
+<section>
+  <div class="flex justify-end mb-4">
     <input
       #searchBox
       type="text"
-      class="search-input"
       placeholder="Search loans…"
       (input)="onSearchInput(searchBox.value)"
     />
 
-    <label class="page-size-select">
+    <label class="flex items-center gap-2 text-[0.85rem] text-[var(--sage)]">
       <span>Per page</span>
-      <select (change)="onPageSizeChange($any($event.target).value)">
+      <select class="py-[0.4rem] px-[0.6rem] border border-[#d8cfc0] rounded-md text-[0.85rem] bg-white text-[var(--ink)]"
+              (change)="onPageSizeChange($any($event.target).value)">
         @for (size of pageSizeOptions; track size) {
           <option [value]="size" [selected]="size === pageSize()">{{ size }}</option>
         }
@@ -19,31 +19,38 @@
   </div>
 
   @if (loading()) {
-    <p class="status-line">Loading loans…</p>
+    <p class="text-[var(--sage)] italic">Loading loans…</p>
   } @else if (loans().length === 0) {
-    <p class="status-line">No loans match your search.</p>
+    <p class="text-[var(--sage)] italic">No loans match your search.</p>
   } @else {
-    <ul class="loan-items">
+    <ul class="list-none p-0 m-0 flex flex-col gap-3">
       @for (loan of loans(); track loan.id) {
-        <li class="loan-item">
-          <span class="loan-book">{{ loan.bookDto.title }}</span>
-          <span class="loan-member">Member #{{ loan.memberId }}</span>
-          <span class="loan-status" [class]="'status-' + loan.status.toLowerCase()">
+        <li class="flex items-center justify-between bg-white rounded border-l-[5px] border-l-[var(--spine)] shadow-[0_1px_3px_rgba(0,0,0,0.08)] py-4 px-5">
+          <span class="font-[Georgia,'Times_New_Roman',ui-serif,serif] font-semibold text-[var(--ink)] flex-1">{{ loan.bookDto.title }}</span>
+          <span class="text-[0.9rem] text-[var(--sage)] mx-6">Member #{{ loan.memberId }}</span>
+          <span class="text-[0.75rem] font-semibold uppercase tracking-[0.03em] py-1 px-[0.6rem] rounded"
+                [ngClass]="{
+                  'bg-[#eaf0e6] text-[var(--sage)]': loan.status === 'ACTIVE',
+                  'bg-[#fbe9e6] text-[#a14b3f]': loan.status === 'OVERDUE',
+                  'bg-[#ece5d8] text-[#9a9284]': loan.status === 'RETURNED'
+                }">
             {{ loan.status }}
           </span>
 
-          <div class="row-actions">
-            <button (click)="editRequested.emit(loan)">Edit</button>
-            <button class="danger" (click)="deleteRequested.emit(loan)">Delete</button>
+          <div class="flex gap-2 flex-shrink-0 ml-5">
+            <button class="py-[0.35rem] px-[0.85rem] text-[0.82rem]"
+                    (click)="editRequested.emit(loan)">Edit</button>
+            <button class="py-[0.35rem] px-[0.85rem] text-[0.82rem] bg-[#a14b3f] hover:bg-[#8a3d33]"
+                    (click)="deleteRequested.emit(loan)">Delete</button>
           </div>
         </li>
       }
     </ul>
 
-    <div class="pagination">
-      <button (click)="prevPage()" [disabled]="currentPage() === 0">Previous</button>
-      <span class="page-indicator">Page {{ currentPage() + 1 }} of {{ totalPages() }}</span>
-      <button (click)="nextPage()" [disabled]="currentPage() + 1 >= totalPages()">Next</button>
+    <div class="flex items-center gap-4 mt-5">
+      <button class="text-[0.9rem]" (click)="prevPage()" [disabled]="currentPage() === 0">Previous</button>
+      <span class="text-[0.9rem] text-[var(--ink)]">Page {{ currentPage() + 1 }} of {{ totalPages() }}</span>
+      <button class="text-[0.9rem]" (click)="nextPage()" [disabled]="currentPage() + 1 >= totalPages()">Next</button>
     </div>
   }
 </section>

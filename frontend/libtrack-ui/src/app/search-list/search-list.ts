@@ -4,8 +4,7 @@ import { NgTemplateOutlet } from '@angular/common';
 @Component({
   selector: 'app-search-list',
   imports: [NgTemplateOutlet],
-  templateUrl: './search-list.html',
-  styleUrl: './search-list.css',
+  templateUrl: './search-list.html'
 })
 export class SearchList<T> {
   items = input.required<T[]>();

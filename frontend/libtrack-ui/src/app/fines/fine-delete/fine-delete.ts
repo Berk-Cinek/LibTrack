@@ -5,8 +5,7 @@ import { FineApi } from '../fine-api';
 @Component({
   selector: 'app-fine-delete',
   imports: [],
-  templateUrl: './fine-delete.html',
-  styleUrl: './fine-delete.css',
+  templateUrl: './fine-delete.html'
 })
 export class FineDelete {
   private fineApi = inject(FineApi);

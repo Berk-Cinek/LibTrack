@@ -1,12 +1,12 @@
 import { Component, inject, OnInit, signal, output } from '@angular/core';
 import { FineApi } from '../fine-api';
 import { Fine } from '../fine';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-fine-list',
-  imports: [],
-  templateUrl: './fine-list.html',
-  styleUrl: './fine-list.css',
+  imports: [NgClass],
+  templateUrl: './fine-list.html'
 })
 export class FineList implements OnInit {
   private fineApi = inject(FineApi);

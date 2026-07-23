@@ -8,8 +8,7 @@ import { Fine } from '../fine';
 @Component({
   selector: 'app-fine-partial-update',
   imports: [ReactiveFormsModule],
-  templateUrl: './fine-partial-update.html',
-  styleUrl: './fine-partial-update.css',
+  templateUrl: './fine-partial-update.html'
 })
 export class FinePartialUpdate {
   private fineApi = inject(FineApi);

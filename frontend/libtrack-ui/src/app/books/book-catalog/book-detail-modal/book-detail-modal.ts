@@ -8,8 +8,7 @@ import { Book } from '../../book';
 @Component({
   selector: 'app-book-detail-modal',
   imports: [],
-  templateUrl: './book-detail-modal.html',
-  styleUrl: './book-detail-modal.css',
+  templateUrl: './book-detail-modal.html'
 })
 export class BookDetailModal {
   authService = inject(AuthService);

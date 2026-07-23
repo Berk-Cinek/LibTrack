@@ -5,8 +5,7 @@ import { Book } from '../book';
 @Component({
   selector: 'app-book-delete',
   imports: [],
-  templateUrl: './book-delete.html',
-  styleUrl: './book-delete.css',
+  templateUrl: './book-delete.html'
 })
 export class BookDelete {
   private bookApi = inject(BookApi);

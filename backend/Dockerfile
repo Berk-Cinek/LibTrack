@@ -1,10 +1,13 @@
 FROM gradle:jdk26 AS build
 WORKDIR /app
 COPY . .
-RUN gradle bootJar --no-daemon
+RUN --mount=type=cache,target=/home/gradle/.gradle \
+        gradle bootJar --no-daemon
 
-From eclipse-temurin:26-jre
+FROM eclipse-temurin:26-jre
 WORKDIR /app
-COPY --from=build /app/build/libs/*.jar app.jar
+RUN groupadd --system spring && useradd --system --gid spring spring
+USER spring
+COPY --chown=spring:spring --from=build /app/build/libs/*.jar app.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]

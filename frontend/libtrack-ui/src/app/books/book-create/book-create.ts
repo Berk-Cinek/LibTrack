@@ -9,8 +9,7 @@ import { Book } from '../book';
 @Component({
   selector: 'app-book-create',
   imports: [ReactiveFormsModule],
-  templateUrl: './book-create.html',
-  styleUrl: './book-create.css',
+  templateUrl: './book-create.html'
 })
 export class BookCreate {
   private bookApi = inject(BookApi);

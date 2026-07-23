@@ -6,8 +6,7 @@ import { AuthService } from '../auth-service';
 @Component({
   selector: 'app-login-widget',
   imports: [ReactiveFormsModule],
-  templateUrl: './login-widget.html',
-  styleUrl: './login-widget.css',
+  templateUrl: './login-widget.html'
 })
 export class LoginWidget {
   authService = inject(AuthService);       // public — template reads it
