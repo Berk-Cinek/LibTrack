@@ -16,7 +16,10 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -141,5 +144,24 @@ class AuthControllerTest {
         assertThat(result).hasStatus(HttpStatus.OK);
         assertThat(result).bodyJson().extractingPath("$.username").isEqualTo("berk");
         assertThat(result).bodyJson().extractingPath("$.memberId").isEqualTo(10);
+    }
+
+    @Test
+    void me_whenAuthenticationNotAuthenticated_returns401() {
+        Authentication auth = mock(Authentication.class);
+        when(auth.isAuthenticated()).thenReturn(false);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+
+        assertThat(mvc.get().uri("/auth/me")).hasStatus(HttpStatus.UNAUTHORIZED);
+    }
+
+    @Test
+    void me_whenAnonymousToken_returns401() {
+        AnonymousAuthenticationToken anon = new AnonymousAuthenticationToken(
+                "key", "anonymousUser",
+                java.util.List.of(new SimpleGrantedAuthority("ROLE_ANONYMOUS")));
+        SecurityContextHolder.getContext().setAuthentication(anon);
+
+        assertThat(mvc.get().uri("/auth/me")).hasStatus(HttpStatus.UNAUTHORIZED);
     }
 }

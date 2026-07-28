@@ -23,6 +23,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -432,5 +433,197 @@ class LoanServiceImplTest {
         when(loanRepository.findByMemberEntity_Id(1L, pageable)).thenReturn(page);
 
         assertThat(loanService.findByMemberId(1L, pageable)).isNotNull();
+    }
+
+    @Test
+    void loanCreate_rejectUnknownBook() {
+        BookEntity unknownBook = new BookEntity();
+        unknownBook.setId(77L);
+
+        LoanEntity request = new LoanEntity();
+        request.setMemberEntity(standardMember);
+        request.setBookEntity(unknownBook);
+
+        when(memberRepository.findById(1L)).thenReturn(Optional.of(standardMember));
+        when(bookRepository.findById(77L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> loanService.loanCreate(request))
+                .isInstanceOf(BorrowingNotAllowedException.class)
+                .hasMessageContaining("Book not found");
+
+        verify(loanRepository, never()).save(any());
+    }
+
+    @Test
+    void assertNotAlreadyBorrowed_DoesNothing_WhenNotBorrowed() {
+        when(loanRepository.existsByMemberEntityAndBookEntityAndStatusNot(
+                standardMember, standardBook, LoanStatus.RETURNED)).thenReturn(false);
+
+        assertThatCode(() -> loanService.assertNotAlreadyBorrowed(standardMember, standardBook))
+                .doesNotThrowAnyException();
+    }
+
+    @Test
+    void partialUpdate_appliesAllNonNullFields() {
+        LoanEntity existingLoan = new LoanEntity();
+        existingLoan.setId(10L);
+        existingLoan.setBookEntity(standardBook);
+        existingLoan.setStatus(LoanStatus.ACTIVE);
+
+        MemberEntity newMember = new MemberEntity();
+        newMember.setId(2L);
+        BookEntity newBook = new BookEntity();
+        newBook.setId(9L);
+        newBook.setAvailableCopies(4);
+
+        LocalDateTime now = LocalDateTime.now();
+        LoanEntity patch = new LoanEntity();
+        patch.setMemberEntity(newMember);
+        patch.setBookEntity(newBook);
+        patch.setBorrowedAt(now.minusDays(2));
+        patch.setDueDate(now.plusDays(12));
+        patch.setReturnedAt(now);
+        patch.setStatus(LoanStatus.ACTIVE); // stays ACTIVE -> no stock movement
+
+        when(loanRepository.findById(10L)).thenReturn(Optional.of(existingLoan));
+        when(loanRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        LoanEntity result = loanService.partialUpdate(10L, patch);
+
+        assertThat(result.getMemberEntity()).isEqualTo(newMember);
+        assertThat(result.getBookEntity()).isEqualTo(newBook);
+        assertThat(result.getBorrowedAt()).isEqualTo(now.minusDays(2));
+        assertThat(result.getDueDate()).isEqualTo(now.plusDays(12));
+        assertThat(result.getReturnedAt()).isEqualTo(now);
+        assertThat(result.getStatus()).isEqualTo(LoanStatus.ACTIVE);
+        verify(bookRepository, never()).save(any());
+    }
+
+    @Test
+    void partialUpdate_keepsStatus_WhenPatchStatusNull() {
+        LoanEntity existingLoan = new LoanEntity();
+        existingLoan.setId(10L);
+        existingLoan.setBookEntity(standardBook);
+        existingLoan.setStatus(LoanStatus.ACTIVE);
+
+        LoanEntity patch = new LoanEntity();
+        patch.setDueDate(LocalDateTime.now().plusDays(3)); // status left null
+
+        when(loanRepository.findById(10L)).thenReturn(Optional.of(existingLoan));
+        when(loanRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        LoanEntity result = loanService.partialUpdate(10L, patch);
+
+        assertThat(result.getStatus()).isEqualTo(LoanStatus.ACTIVE);
+        verify(bookRepository, never()).save(any());
+    }
+
+    @Test
+    void partialUpdate_returnsStock_WhenOverdueMarkedReturned() {
+        standardBook.setAvailableCopies(7);
+
+        LoanEntity existingLoan = new LoanEntity();
+        existingLoan.setId(10L);
+        existingLoan.setBookEntity(standardBook);
+        existingLoan.setStatus(LoanStatus.OVERDUE);
+        existingLoan.setReturnedAt(null);
+
+        LoanEntity patch = new LoanEntity();
+        patch.setStatus(LoanStatus.RETURNED);
+
+        when(loanRepository.findById(10L)).thenReturn(Optional.of(existingLoan));
+        when(loanRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        LoanEntity result = loanService.partialUpdate(10L, patch);
+
+        assertThat(standardBook.getAvailableCopies()).isEqualTo(8);
+        assertThat(result.getStatus()).isEqualTo(LoanStatus.RETURNED);
+        assertThat(result.getReturnedAt()).isNotNull();
+        verify(bookRepository).save(standardBook);
+    }
+
+    @Test
+    void partialUpdate_keepsExistingReturnedAt_WhenReturningWithTimestamp() {
+        standardBook.setAvailableCopies(7);
+        LocalDateTime original = LocalDateTime.now().minusDays(1);
+
+        LoanEntity existingLoan = new LoanEntity();
+        existingLoan.setId(10L);
+        existingLoan.setBookEntity(standardBook);
+        existingLoan.setStatus(LoanStatus.ACTIVE);
+
+        LoanEntity patch = new LoanEntity();
+        patch.setStatus(LoanStatus.RETURNED);
+        patch.setReturnedAt(original); // non-null -> the null-check is false
+
+        when(loanRepository.findById(10L)).thenReturn(Optional.of(existingLoan));
+        when(loanRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        LoanEntity result = loanService.partialUpdate(10L, patch);
+
+        assertThat(result.getReturnedAt()).isEqualTo(original);
+        assertThat(standardBook.getAvailableCopies()).isEqualTo(8);
+        verify(bookRepository).save(standardBook);
+    }
+
+    @Test
+    void partialUpdate_decrementsStock_WhenReturnedMarkedOverdue() {
+        standardBook.setAvailableCopies(7);
+
+        LoanEntity existingLoan = new LoanEntity();
+        existingLoan.setId(10L);
+        existingLoan.setBookEntity(standardBook);
+        existingLoan.setStatus(LoanStatus.RETURNED);
+        existingLoan.setReturnedAt(LocalDateTime.now());
+
+        LoanEntity patch = new LoanEntity();
+        patch.setStatus(LoanStatus.OVERDUE);
+
+        when(loanRepository.findById(10L)).thenReturn(Optional.of(existingLoan));
+        when(loanRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        LoanEntity result = loanService.partialUpdate(10L, patch);
+
+        assertThat(standardBook.getAvailableCopies()).isEqualTo(6);
+        assertThat(result.getStatus()).isEqualTo(LoanStatus.OVERDUE);
+        assertThat(result.getReturnedAt()).isNull();
+        verify(bookRepository).save(standardBook);
+    }
+
+    @Test
+    void loanDelete_returnStockForOverdueLoan() {
+        standardBook.setAvailableCopies(7);
+
+        LoanEntity existingLoan = new LoanEntity();
+        existingLoan.setId(10L);
+        existingLoan.setBookEntity(standardBook);
+        existingLoan.setStatus(LoanStatus.OVERDUE);
+
+        when(loanRepository.findById(10L)).thenReturn(Optional.of(existingLoan));
+
+        loanService.delete(10L);
+
+        assertThat(standardBook.getAvailableCopies()).isEqualTo(8);
+        verify(bookRepository).save(standardBook);
+        verify(loanRepository).deleteById(10L);
+    }
+
+     @Test
+    void findAll_WithSearch_WhenSearchIsBlank_CallsStandardFindAll() {
+        Page<LoanEntity> page = new PageImpl<>(List.of(new LoanEntity()));
+        when(loanRepository.findAll(pageable)).thenReturn(page);
+
+        assertThat(loanService.findAll(pageable, "   ")).isNotNull();
+        verify(loanRepository).findAll(pageable);
+    }
+
+   @Test
+    void markOverdueAndFine_DoesNothing_WhenNoOverdueLoans() {
+        when(loanRepository.findByStatusAndDueDateBefore(eq(LoanStatus.ACTIVE), any(LocalDateTime.class)))
+                .thenReturn(List.of());
+
+        loanService.markOverdueAndFine();
+
+        verify(loanRepository, never()).save(any());
     }
 }
