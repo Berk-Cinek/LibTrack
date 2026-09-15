@@ -42,7 +42,7 @@ public class BookServiceImpl implements BookService {
     public BookEntity partialUpdate(Long id, BookEntity bookEntity) {
         bookEntity.setId(id);
 
-        return bookRepository.findById(id).map(existingBook ->{
+            return bookRepository.findById(id).map(existingBook ->{
             Optional.ofNullable(bookEntity.getIsbn()).ifPresent(existingBook::setIsbn);
             Optional.ofNullable(bookEntity.getTitle()).ifPresent(existingBook::setTitle);
             Optional.ofNullable(bookEntity.getAuthor()).ifPresent(existingBook::setAuthor);

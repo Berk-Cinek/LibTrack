@@ -101,6 +101,7 @@ public class LoanServiceImpl implements LoanService {
 
     @Override
     @CachePut(value = "LOAN_CACHE", key = "#result.id()" )
+    @Transactional
     public LoanEntity partialUpdate(Long id, LoanEntity loanEntity) {
         loanEntity.setId(id);
 
@@ -149,6 +150,7 @@ public class LoanServiceImpl implements LoanService {
 
     @Override
     @CacheEvict(value = "LOAN_CACHE", key = "#id")
+    @Transactional
     public void delete(Long id) {
         LoanEntity loan = loanRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Loan not found: " + id));
