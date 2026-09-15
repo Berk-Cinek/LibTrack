@@ -47,6 +47,7 @@ public class LoanServiceImpl implements LoanService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "BOOK_CACHE", key = "#loanEntity.bookEntity.id")
     public LoanEntity loanCreate(LoanEntity loanEntity) {
 
         MemberEntity memberEntity = memberRepository.findById(loanEntity.getMemberEntity().getId())
@@ -101,6 +102,7 @@ public class LoanServiceImpl implements LoanService {
 
     @Override
     @CachePut(value = "LOAN_CACHE", key = "#result.id()" )
+    @CacheEvict(value = "BOOK_CACHE", key = "#loanEntity.bookEntity.id")
     @Transactional
     public LoanEntity partialUpdate(Long id, LoanEntity loanEntity) {
         loanEntity.setId(id);
@@ -152,7 +154,7 @@ public class LoanServiceImpl implements LoanService {
     @CacheEvict(value = "LOAN_CACHE", key = "#id")
     @Transactional
     public void delete(Long id) {
-        LoanEntity loan = loanRepository.findById(id)
+        LoanEntity loan = loanRepository.findById(id)gi
                 .orElseThrow(() -> new ResourceNotFoundException("Loan not found: " + id));
 
         if (loan.getStatus() == LoanStatus.ACTIVE || loan.getStatus() == LoanStatus.OVERDUE) {
